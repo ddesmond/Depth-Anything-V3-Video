@@ -12,7 +12,10 @@ from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse, RedirectResponse
 from pydantic import BaseModel, Field
 
+from . import higgsfield as hf
 from . import processing
+from .genstore import GenStore
+from .genworker import GenWorker
 from .jobs import Job, JobQueue
 from .models import REPOS, ModelCache
 
@@ -34,6 +37,14 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 models = ModelCache(DEVICE)
 jobs = JobQueue(models)
 
+# Higgsfield generation: persistent history + submit/poll/download worker
+GEN_DIR = os.path.join(DATA_DIR, "generate")
+os.makedirs(GEN_DIR, exist_ok=True)
+gen_client = hf.Client()
+gen_store = GenStore(os.path.join(GEN_DIR, "history.db"))
+gen_worker = GenWorker(gen_store, gen_client, os.path.join(GEN_DIR, "outputs"),
+                       max_concurrent=int(os.environ.get("HIGGSFIELD_MAX_CONCURRENT", "4")))
+
 app = FastAPI(title="Depth Anything V3 service")
 
 
@@ -41,6 +52,9 @@ app = FastAPI(title="Depth Anything V3 service")
 def _start():
     os.makedirs(JOBS_DIR, exist_ok=True)
     jobs.start()
+    gen_worker.start()
+    if gen_client.configured and not os.environ.get("UI_PASSWORD"):
+        logging.warning("HIGGSFIELD key set but UI_PASSWORD is empty: Generate submissions are blocked")
 
 
 class JobError(ValueError):
@@ -238,6 +252,10 @@ def download_preview(job_id: str):
     return FileResponse(job.result["preview"], media_type="video/mp4")
 
 
-from .ui import build_ui  # noqa: E402  (needs the helpers above)
+from .ui import CSS, THEME, build_ui  # noqa: E402  (needs the helpers above)
 
-app = gr.mount_gradio_app(app, build_ui(), path="/ui", allowed_paths=ALLOWED_ROOTS)
+# One shared password for the whole UI (the REST API stays open for the Nuke node).
+_auth = (os.environ.get("UI_USER", "da3"), os.environ["UI_PASSWORD"]) if os.environ.get("UI_PASSWORD") else None
+app = gr.mount_gradio_app(app, build_ui(), path="/ui", allowed_paths=ALLOWED_ROOTS, auth=_auth,
+                          auth_message="Depth Anything V3 · shared studio password",
+                          theme=THEME, css=CSS)

@@ -18,6 +18,12 @@ services:
       HF_HOST_CACHE: /hf-host/hub
       DA3_LOG_LEVEL: WARN
       GRADIO_TEMP_DIR: /data/gradio-cache
+      UI_USER: ${UI_USER:-da3}
+      UI_PASSWORD: ${UI_PASSWORD:-}
+      HIGGSFIELD_KEY_ID: ${HIGGSFIELD_KEY_ID:-}
+      HIGGSFIELD_KEY_SECRET: ${HIGGSFIELD_KEY_SECRET:-}
+      HIGGSFIELD_MAX_CONCURRENT: ${HIGGSFIELD_MAX_CONCURRENT:-4}
+      HIGGSFIELD_BASE_URL: ${HIGGSFIELD_BASE_URL:-https://api.higgsfield.ai}
     volumes:
       # mounted at the same path as on the host so Nuke paths work as-is
       - ${PROJECTS_DIR}:${PROJECTS_DIR}

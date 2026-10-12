@@ -66,6 +66,44 @@ Open **http://localhost:8000/ui** (or `http://<machine-ip>:8000/ui` from the LAN
 UI jobs share the API's queue. Gradio's file cache lives in `./data/gradio-cache`
 and is cleaned after a day.
 
+### Generate with Higgsfield (Web UI)
+
+The UI has three extra tabs for sending DA3 results to
+[Higgsfield](https://docs.higgsfield.ai) video models.
+
+- **Generate.** Add finished DA3 jobs to the media list as a greyscale **depth mp4** (near is white, normalised over the whole shot), an sRGB **plate mp4**, or the preview. You can also upload files.
+  - Pick any of the 67 video workflows. The form is built from each workflow's JSON schema.
+  - **Estimate cost** before you submit.
+  - **Draft** submits at the model's lowest quality tier.
+  - **Batches:** picking several files in a one-file field, or separating prompt variants with a `---` line, makes one job per combination.
+- **History.** Every job is stored in SQLite (`./data/generate/history.db`) with:
+  - model, endpoint, prompt, all parameters and the seed;
+  - the inputs, the exact body sent and the request ID;
+  - the estimated cost, timestamps and status.
+
+  Actions:
+  - **Resubmit** with everything the same.
+  - **Upscale** to a higher `resolution` or `mode`, or to a higher-tier sibling endpoint (e.g. Kling 3.0 std → pro → 4K). Upscales keep the prompt and inputs, and the seed on models that have one.
+  - **Picks:** draft many, pick the good ones, upscale them together.
+  - **Duplicate and edit** and **Cancel**.
+
+  Outputs are downloaded to `./data/generate/outputs`, because Higgsfield keeps them for only 7 days.
+- **Funds.** Estimated spend on completed jobs by day and by model, plus queued work. Failed, moderated and canceled jobs are refunded, so they aren't counted. The real balance is only in the [Higgsfield console](https://console.higgsfield.ai).
+
+Configure it in `.env`:
+
+| Variable | Purpose |
+|---|---|
+| `UI_USER`, `UI_PASSWORD` | Login for the whole UI. Submissions are blocked while a key is set and the password is empty |
+| `HIGGSFIELD_KEY_ID`, `HIGGSFIELD_KEY_SECRET` | API credentials. Without them, jobs wait as `pending` |
+| `HIGGSFIELD_MAX_CONCURRENT` | Your account's concurrency limit (default 4) |
+
+Things to know:
+- Higgsfield has no depth-control input, so depth goes in as a **reference video**. The model may not follow its layout.
+- Only `video/mp4` is accepted for video.
+- Seeds exist only on the Wan and Happy Horse models.
+- The model list comes from `app/higgsfield_catalog.json`. Refresh it with `python scripts/update_higgsfield_catalog.py`, then rebuild.
+
 ### API
 
 | Method | Path | |

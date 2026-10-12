@@ -1,0 +1,5105 @@
+[
+ {
+  "slug": "genjutsu",
+  "vendor": "Higgsfield",
+  "name": "Genjutsu",
+  "workflows": [
+   {
+    "endpoint": "higgsfield/genjutsu/motion-transfer/v1.0",
+    "title": "Genjutsu \u2014 Motion transfer",
+    "notes": [
+     "Use higgsfield/genjutsu/motion-transfer/v1.0 for new integrations. The legacy endpoint higgsfiled/genjutsu/motion-transfer/v1.0 remains callable for existing clients but is hidden from model discovery.",
+     "The source video must be at least 4 seconds. Videos longer than 30 seconds are trimmed to 30 seconds; output duration follows the prepared source video.",
+     "Provide 1\u20138 image references. The prompt is optional and defaults to an empty string."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "MotionTransferParams",
+     "required": [
+      "video_url",
+      "image_urls"
+     ],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "default": "",
+       "maxLength": 10000
+      },
+      "video_url": {
+       "type": "string",
+       "title": "Video Url",
+       "format": "uri",
+       "maxLength": 2083,
+       "minLength": 1
+      },
+      "image_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri",
+        "maxLength": 2083,
+        "minLength": 1
+       },
+       "title": "Image Urls",
+       "maxItems": 8,
+       "minItems": 1
+      },
+      "resolution": {
+       "enum": [
+        "720p",
+        "480p",
+        "1080p"
+       ],
+       "type": "string",
+       "title": "Resolution",
+       "default": "720p"
+      }
+     },
+     "additionalProperties": false
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/genjutsu/motion-transfer"
+   },
+   {
+    "endpoint": "higgsfield/genjutsu/object-swap/v1.0",
+    "title": "Genjutsu \u2014 Object swap",
+    "notes": [
+     "Use higgsfield/genjutsu/object-swap/v1.0 for new integrations. The legacy endpoint higgsfiled/genjutsu/object-swap/v1.0 remains callable for existing clients but is hidden from model discovery.",
+     "The source video must be at least 4 seconds. Videos longer than 30 seconds are trimmed to 30 seconds; output duration follows the prepared source video.",
+     "Provide 1\u20138 image references. The prompt is optional and defaults to an empty string.",
+     "The source video must contain at least 409,600 pixels per frame (width \u00d7 height)."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "ObjectSwapParams",
+     "required": [
+      "video_url",
+      "image_urls"
+     ],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "default": "",
+       "maxLength": 10000
+      },
+      "video_url": {
+       "type": "string",
+       "title": "Video Url",
+       "format": "uri",
+       "maxLength": 2083,
+       "minLength": 1
+      },
+      "image_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri",
+        "maxLength": 2083,
+        "minLength": 1
+       },
+       "title": "Image Urls",
+       "maxItems": 8,
+       "minItems": 1
+      },
+      "resolution": {
+       "enum": [
+        "720p",
+        "480p",
+        "1080p"
+       ],
+       "type": "string",
+       "title": "Resolution",
+       "default": "720p"
+      }
+     },
+     "additionalProperties": false
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/genjutsu/object-swap"
+   },
+   {
+    "endpoint": "higgsfield/genjutsu/restyle/v1.0",
+    "title": "Genjutsu \u2014 Restyle",
+    "notes": [
+     "Restyle changes the visual style of a source video while retaining its motion, shot composition, and source audio. Each request produces one video.",
+     "Select a current style from GET /models/higgsfield/genjutsu/restyle/v1.0/presets and send its UUID as preset_id. The example UUID below is illustrative of a published preset; fetch the current catalog before submitting.",
+     "The source must be at least 4 seconds and no larger than 200 MiB. Videos longer than 30 seconds are trimmed to their first 30 seconds, including audio.",
+     "Character references are optional: omit image_urls or send [] to restyle the existing source subjects. Supply up to 5 character images to guide their appearance.",
+     "Defaults apply to omitted optional fields. Use [] or an empty string where appropriate; null is not accepted.",
+     "Output framing is derived from the source and animation cadence can depend on the selected style. Exact output duration and FPS may differ from the source."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Genjutsu Restyle",
+     "required": [
+      "video_url",
+      "preset_id"
+     ],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "default": "",
+       "maxLength": 10000
+      },
+      "preset_id": {
+       "type": "string",
+       "title": "Style preset",
+       "format": "uuid"
+      },
+      "video_url": {
+       "type": "string",
+       "title": "Source video",
+       "format": "uri",
+       "minLength": 1,
+       "description": "Source video, 4\u201330 seconds. Longer videos are trimmed to 30 seconds."
+      },
+      "image_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri",
+        "minLength": 1
+       },
+       "title": "Character images",
+       "default": [],
+       "maxItems": 5,
+       "description": "Optional character references. Leave empty to restyle the source frame."
+      },
+      "resolution": {
+       "enum": [
+        "480p",
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "title": "Resolution",
+       "default": "720p"
+      }
+     },
+     "additionalProperties": false
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/genjutsu/restyle"
+   }
+  ]
+ },
+ {
+  "slug": "seedance-2",
+  "vendor": "ByteDance",
+  "name": "Seedance 2.0",
+  "workflows": [
+   {
+    "endpoint": "bytedance/seedance-2.0/image-to-video",
+    "title": "Seedance 2.0 \u2014 Image to video",
+    "notes": [
+     "Use publicly accessible media URLs; asset:// references are rejected for these endpoints.",
+     "The prompt is optional. Output framing follows image_url; end_image_url is the optional last frame."
+    ],
+    "schema": {
+     "type": "object",
+     "required": [
+      "image_url"
+     ],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "minLength": 1,
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 4
+      },
+      "image_url": {
+       "type": "string",
+       "format": "uri"
+      },
+      "resolution": {
+       "enum": [
+        "480p",
+        "720p",
+        "1080p",
+        "4k"
+       ],
+       "type": "string",
+       "default": "720p"
+      },
+      "end_image_url": {
+       "type": "string",
+       "format": "uri"
+      },
+      "generate_audio": {
+       "type": "boolean",
+       "default": true
+      }
+     },
+     "additionalProperties": false
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/seedance-2/image-to-video"
+   },
+   {
+    "endpoint": "bytedance/seedance-2.0/reference-to-video",
+    "title": "Seedance 2.0 \u2014 Reference to video",
+    "notes": [
+     "Use publicly accessible media URLs; asset:// references are rejected for these endpoints.",
+     "Provide a nonempty image_urls or video_urls array. Audio alone does not satisfy the reference requirement. Do not mix reference arrays with image_url, end_image_url or video_url.",
+     "Reference videos may be resized, transcoded and trimmed to 15 seconds each. Reference audio is normalized to 2\u201315 seconds per file and at most 15 seconds total."
+    ],
+    "schema": {
+     "if": {
+      "required": [
+       "image_urls"
+      ]
+     },
+     "else": {
+      "required": [
+       "video_urls"
+      ]
+     },
+     "type": "object",
+     "required": [],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "minLength": 1,
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 4
+      },
+      "audio_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri"
+       },
+       "maxItems": 3,
+       "minItems": 1
+      },
+      "image_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri"
+       },
+       "maxItems": 9,
+       "minItems": 1
+      },
+      "resolution": {
+       "enum": [
+        "480p",
+        "720p",
+        "1080p",
+        "4k"
+       ],
+       "type": "string",
+       "default": "720p"
+      },
+      "video_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri"
+       },
+       "maxItems": 3,
+       "minItems": 1
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "4:3",
+        "1:1",
+        "3:4",
+        "9:16",
+        "21:9"
+       ],
+       "type": "string",
+       "default": "16:9"
+      },
+      "generate_audio": {
+       "type": "boolean",
+       "default": true
+      }
+     },
+     "additionalProperties": false
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/seedance-2/reference-to-video"
+   },
+   {
+    "endpoint": "bytedance/seedance-2.0/text-to-video",
+    "title": "Seedance 2.0 \u2014 Text to video",
+    "notes": [
+     "Use publicly accessible media URLs; asset:// references are rejected for these endpoints.",
+     "Provide a nonblank prompt. This endpoint does not use media inputs; use the image-to-video or reference-to-video endpoint instead."
+    ],
+    "schema": {
+     "type": "object",
+     "required": [
+      "prompt"
+     ],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "minLength": 1,
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 4
+      },
+      "resolution": {
+       "enum": [
+        "480p",
+        "720p",
+        "1080p",
+        "4k"
+       ],
+       "type": "string",
+       "default": "720p"
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "4:3",
+        "1:1",
+        "3:4",
+        "9:16",
+        "21:9"
+       ],
+       "type": "string",
+       "default": "16:9"
+      },
+      "generate_audio": {
+       "type": "boolean",
+       "default": true
+      }
+     },
+     "additionalProperties": false
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/seedance-2/text-to-video"
+   }
+  ]
+ },
+ {
+  "slug": "seedance-2-5",
+  "vendor": "ByteDance",
+  "name": "Seedance 2.5",
+  "workflows": [
+   {
+    "endpoint": "bytedance/seedance-2.5/image-to-video",
+    "title": "Seedance 2.5 \u2014 Image to video",
+    "notes": [
+     "Use publicly accessible media URLs; asset:// references are rejected for these endpoints.",
+     "The prompt is optional. Output framing follows image_url; end_image_url is the optional last frame."
+    ],
+    "schema": {
+     "type": "object",
+     "required": [
+      "image_url"
+     ],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "minLength": 1,
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "default": 5,
+       "maximum": 30,
+       "minimum": 4
+      },
+      "image_url": {
+       "type": "string",
+       "format": "uri"
+      },
+      "resolution": {
+       "enum": [
+        "480p",
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "default": "720p"
+      },
+      "bitrate_mode": {
+       "enum": [
+        "standard",
+        "high"
+       ],
+       "type": "string",
+       "default": "high"
+      },
+      "end_image_url": {
+       "type": "string",
+       "format": "uri"
+      },
+      "generate_audio": {
+       "type": "boolean",
+       "default": true
+      }
+     },
+     "additionalProperties": false
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/seedance-2-5/image-to-video"
+   },
+   {
+    "endpoint": "bytedance/seedance-2.5/reference-to-video",
+    "title": "Seedance 2.5 \u2014 Reference to video",
+    "notes": [
+     "Use publicly accessible media URLs; asset:// references are rejected for these endpoints.",
+     "Provide at least one nonempty reference array: image_urls, video_urls or audio_urls. Audio-only references are supported by this schema and preprocessing path.",
+     "Reference media are limited to 30 images, 10 videos and 10 audio files, with at most 50 items total. Video duration and audio duration are normalized separately to at most 30 seconds total per media type."
+    ],
+    "schema": {
+     "if": {
+      "required": [
+       "image_urls"
+      ]
+     },
+     "else": {
+      "if": {
+       "required": [
+        "video_urls"
+       ]
+      },
+      "else": {
+       "required": [
+        "audio_urls"
+       ]
+      }
+     },
+     "type": "object",
+     "required": [],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "minLength": 1,
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "default": 5,
+       "maximum": 30,
+       "minimum": 4
+      },
+      "audio_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri"
+       },
+       "maxItems": 10,
+       "minItems": 1
+      },
+      "image_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri"
+       },
+       "maxItems": 30,
+       "minItems": 1
+      },
+      "resolution": {
+       "enum": [
+        "480p",
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "default": "720p"
+      },
+      "video_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri"
+       },
+       "maxItems": 10,
+       "minItems": 1
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "4:3",
+        "1:1",
+        "3:4",
+        "9:16",
+        "21:9"
+       ],
+       "type": "string",
+       "default": "16:9"
+      },
+      "bitrate_mode": {
+       "enum": [
+        "standard",
+        "high"
+       ],
+       "type": "string",
+       "default": "high"
+      },
+      "generate_audio": {
+       "type": "boolean",
+       "default": true
+      }
+     },
+     "additionalProperties": false
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/seedance-2-5/reference-to-video"
+   },
+   {
+    "endpoint": "bytedance/seedance-2.5/text-to-video",
+    "title": "Seedance 2.5 \u2014 Text to video",
+    "notes": [
+     "Use publicly accessible media URLs; asset:// references are rejected for these endpoints.",
+     "Provide a nonblank prompt. This endpoint does not use media inputs; use the image-to-video or reference-to-video endpoint instead."
+    ],
+    "schema": {
+     "type": "object",
+     "required": [
+      "prompt"
+     ],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "minLength": 1,
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "default": 5,
+       "maximum": 30,
+       "minimum": 4
+      },
+      "resolution": {
+       "enum": [
+        "480p",
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "default": "720p"
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "4:3",
+        "1:1",
+        "3:4",
+        "9:16",
+        "21:9"
+       ],
+       "type": "string",
+       "default": "16:9"
+      },
+      "bitrate_mode": {
+       "enum": [
+        "standard",
+        "high"
+       ],
+       "type": "string",
+       "default": "high"
+      },
+      "output_format": {
+       "enum": [
+        "mp4",
+        "mov"
+       ],
+       "type": "string",
+       "default": "mp4"
+      },
+      "generate_audio": {
+       "type": "boolean",
+       "default": true
+      }
+     },
+     "additionalProperties": false
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/seedance-2-5/text-to-video"
+   },
+   {
+    "endpoint": "bytedance/seedance-2.5/video-edit",
+    "title": "Seedance 2.5 \u2014 Video edit",
+    "notes": [
+     "Use publicly accessible media URLs; asset:// references are rejected for these endpoints.",
+     "The source video_url counts toward the 10-video limit, so include at most 9 additional video_urls. At most 50 media items are accepted across the source video and all reference arrays.",
+     "Videos and audio may be trimmed or padded during preprocessing to fit their respective 30-second total budgets. Output framing follows the source video.",
+     "Do not send duration: this endpoint derives output duration from the processed source video. The main video is normalized to at least 4 seconds."
+    ],
+    "schema": {
+     "type": "object",
+     "required": [
+      "prompt",
+      "video_url"
+     ],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "minLength": 1,
+       "description": "Write your prompt here"
+      },
+      "video_url": {
+       "type": "string",
+       "format": "uri"
+      },
+      "audio_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri"
+       },
+       "maxItems": 10,
+       "minItems": 1
+      },
+      "image_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri"
+       },
+       "maxItems": 30,
+       "minItems": 1
+      },
+      "resolution": {
+       "enum": [
+        "480p",
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "default": "720p"
+      },
+      "video_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri"
+       },
+       "maxItems": 10,
+       "minItems": 1
+      },
+      "bitrate_mode": {
+       "enum": [
+        "standard",
+        "high"
+       ],
+       "type": "string",
+       "default": "high"
+      },
+      "generate_audio": {
+       "type": "boolean",
+       "default": true
+      }
+     },
+     "additionalProperties": false
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/seedance-2-5/video-edit"
+   },
+   {
+    "endpoint": "bytedance/seedance-2.5/video-extend",
+    "title": "Seedance 2.5 \u2014 Video extend",
+    "notes": [
+     "Use publicly accessible media URLs; asset:// references are rejected for these endpoints.",
+     "The source video_url counts toward the 10-video limit, so include at most 9 additional video_urls. At most 50 media items are accepted across the source video and all reference arrays.",
+     "Videos and audio may be trimmed or padded during preprocessing to fit their respective 30-second total budgets. Output framing follows the source video.",
+     "duration is an integer from 4 to 30 seconds, with default 5."
+    ],
+    "schema": {
+     "type": "object",
+     "required": [
+      "prompt",
+      "video_url"
+     ],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "minLength": 1,
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "default": 5,
+       "maximum": 30,
+       "minimum": 4
+      },
+      "video_url": {
+       "type": "string",
+       "format": "uri"
+      },
+      "audio_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri"
+       },
+       "maxItems": 10,
+       "minItems": 1
+      },
+      "image_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri"
+       },
+       "maxItems": 30,
+       "minItems": 1
+      },
+      "resolution": {
+       "enum": [
+        "480p",
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "default": "720p"
+      },
+      "video_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri"
+       },
+       "maxItems": 10,
+       "minItems": 1
+      },
+      "bitrate_mode": {
+       "enum": [
+        "standard",
+        "high"
+       ],
+       "type": "string",
+       "default": "high"
+      },
+      "generate_audio": {
+       "type": "boolean",
+       "default": true
+      }
+     },
+     "additionalProperties": false
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/seedance-2-5/video-extend"
+   }
+  ]
+ },
+ {
+  "slug": "kling-2-5-turbo",
+  "vendor": "Kling",
+  "name": "Kling 2.5 Turbo",
+  "workflows": [
+   {
+    "endpoint": "kling-video/v2.5-turbo/pro/image-to-video",
+    "title": "Kling 2.5 Turbo \u2014 Pro image to video",
+    "notes": [
+     "duration accepts 5 or 10 seconds; 5 is the default.",
+     "This endpoint does not expose a sound or aspect_ratio field.",
+     "The example.com media URLs are placeholders. Replace them with public HTTPS URLs to your own media before submitting."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Kling 2.5 Playground",
+     "required": [
+      "prompt",
+      "image_url"
+     ],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "enum": [
+        5,
+        10
+       ],
+       "type": "integer",
+       "title": "Duration",
+       "default": 5
+      },
+      "cfg_scale": {
+       "type": "number",
+       "title": "CFG Scale",
+       "default": 0.5,
+       "maximum": 1,
+       "minimum": 0,
+       "multipleOf": 0.01
+      },
+      "image_url": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      },
+      "negative_prompt": {
+       "type": "string",
+       "title": "Negative Prompt",
+       "default": ""
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/kling-2-5-turbo/pro-image-to-video"
+   },
+   {
+    "endpoint": "kling-video/v2.5-turbo/pro/text-to-video",
+    "title": "Kling 2.5 Turbo \u2014 Pro text to video",
+    "notes": [
+     "duration accepts 5 or 10 seconds; 5 is the default.",
+     "This endpoint does not expose a sound or aspect_ratio field."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Kling 2.5 Playground",
+     "required": [
+      "prompt"
+     ],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "enum": [
+        5,
+        10
+       ],
+       "type": "integer",
+       "title": "Duration",
+       "default": 5
+      },
+      "cfg_scale": {
+       "type": "number",
+       "title": "CFG Scale",
+       "default": 0.5,
+       "maximum": 1,
+       "minimum": 0,
+       "multipleOf": 0.01
+      },
+      "negative_prompt": {
+       "type": "string",
+       "title": "Negative Prompt",
+       "default": ""
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/kling-2-5-turbo/pro-text-to-video"
+   },
+   {
+    "endpoint": "kling-video/v2.5-turbo/standard/image-to-video",
+    "title": "Kling 2.5 Turbo \u2014 Standard image to video",
+    "notes": [
+     "duration accepts 5 or 10 seconds; 5 is the default.",
+     "This endpoint does not expose a sound or aspect_ratio field.",
+     "The example.com media URLs are placeholders. Replace them with public HTTPS URLs to your own media before submitting."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Kling 2.5 Playground",
+     "required": [
+      "prompt",
+      "image_url"
+     ],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "enum": [
+        5,
+        10
+       ],
+       "type": "integer",
+       "title": "Duration",
+       "default": 5
+      },
+      "cfg_scale": {
+       "type": "number",
+       "title": "CFG Scale",
+       "default": 0.5,
+       "maximum": 1,
+       "minimum": 0,
+       "multipleOf": 0.01
+      },
+      "image_url": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      },
+      "negative_prompt": {
+       "type": "string",
+       "title": "Negative Prompt",
+       "default": ""
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/kling-2-5-turbo/standard-image-to-video"
+   }
+  ]
+ },
+ {
+  "slug": "kling-2-6",
+  "vendor": "Kling",
+  "name": "Kling 2.6",
+  "workflows": [
+   {
+    "endpoint": "kling-video/v2.6/pro/image-to-video",
+    "title": "Kling 2.6 \u2014 Pro image to video",
+    "notes": [
+     "duration accepts 5 or 10 seconds; 5 is the default.",
+     "Native audio uses sound: on or off and defaults to on.",
+     "The example.com media URLs are placeholders. Replace them with public HTTPS URLs to your own media before submitting."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Kling 2.6 Playground",
+     "required": [
+      "prompt",
+      "image_url"
+     ],
+     "properties": {
+      "sound": {
+       "enum": [
+        "on",
+        "off"
+       ],
+       "type": "string",
+       "title": "Generate sound",
+       "default": "on"
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "enum": [
+        5,
+        10
+       ],
+       "type": "integer",
+       "title": "Duration",
+       "default": 5
+      },
+      "cfg_scale": {
+       "type": "number",
+       "title": "CFG Scale",
+       "default": 0.5,
+       "maximum": 1,
+       "minimum": 0,
+       "multipleOf": 0.01
+      },
+      "image_url": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "9:16",
+        "1:1"
+       ],
+       "type": "string",
+       "title": "Aspect ratio"
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/kling-2-6/pro-image-to-video"
+   },
+   {
+    "endpoint": "kling-video/v2.6/pro/text-to-video",
+    "title": "Kling 2.6 \u2014 Pro text to video",
+    "notes": [
+     "duration accepts 5 or 10 seconds; 5 is the default.",
+     "Native audio uses sound: on or off and defaults to on."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Kling 2.6 Playground",
+     "required": [
+      "prompt"
+     ],
+     "properties": {
+      "sound": {
+       "enum": [
+        "on",
+        "off"
+       ],
+       "type": "string",
+       "title": "Generate sound",
+       "default": "on"
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "enum": [
+        5,
+        10
+       ],
+       "type": "integer",
+       "title": "Duration",
+       "default": 5
+      },
+      "cfg_scale": {
+       "type": "number",
+       "title": "CFG Scale",
+       "default": 0.5,
+       "maximum": 1,
+       "minimum": 0,
+       "multipleOf": 0.01
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "9:16",
+        "1:1"
+       ],
+       "type": "string",
+       "title": "Aspect ratio",
+       "default": "16:9"
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/kling-2-6/pro-text-to-video"
+   }
+  ]
+ },
+ {
+  "slug": "kling-2-6-motion-control",
+  "vendor": "Kling",
+  "name": "Kling 2.6 Motion Control",
+  "workflows": [
+   {
+    "endpoint": "kling-video/motion-control/pro",
+    "title": "Kling 2.6 Motion Control \u2014 Pro",
+    "notes": [
+     "Use a motion-reference video from 3 to 30 seconds long. The output duration follows the source video; do not send a separate duration field.",
+     "Use a character image up to 10 MB with each dimension between 300 and 65,536 pixels. Images outside the 0.4\u20132.5 width-to-height range are adjusted before generation.",
+     "Videos larger than 100 MB are compressed before generation.",
+     "Set character_orientation to image or video. keep_original_sound uses the strings yes and no, with yes as the default.",
+     "The example.com media URLs are placeholders. Replace them with public HTTPS URLs to your own media before submitting."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Kling Motion Control Playground",
+     "required": [
+      "image_url",
+      "video_url"
+     ],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "default": "",
+       "description": "Write your prompt here"
+      },
+      "image_url": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      },
+      "video_url": {
+       "type": "string",
+       "title": "Video URL",
+       "format": "uri"
+      },
+      "keep_original_sound": {
+       "enum": [
+        "yes",
+        "no"
+       ],
+       "type": "string",
+       "title": "Keep original sound",
+       "default": "yes"
+      },
+      "character_orientation": {
+       "enum": [
+        "image",
+        "video"
+       ],
+       "type": "string",
+       "title": "Character orientation",
+       "default": "video",
+       "description": "Generate the orientation of the characters in the video, which can be selected to match the image or the video"
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/kling-2-6-motion-control/pro"
+   },
+   {
+    "endpoint": "kling-video/motion-control/std",
+    "title": "Kling 2.6 Motion Control \u2014 Standard",
+    "notes": [
+     "Use a motion-reference video from 3 to 30 seconds long. The output duration follows the source video; do not send a separate duration field.",
+     "Use a character image up to 10 MB with each dimension between 300 and 65,536 pixels. Images outside the 0.4\u20132.5 width-to-height range are adjusted before generation.",
+     "Videos larger than 100 MB are compressed before generation.",
+     "Set character_orientation to image or video. keep_original_sound uses the strings yes and no, with yes as the default.",
+     "The example.com media URLs are placeholders. Replace them with public HTTPS URLs to your own media before submitting."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Kling Motion Control Playground",
+     "required": [
+      "image_url",
+      "video_url"
+     ],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "default": "",
+       "description": "Write your prompt here"
+      },
+      "image_url": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      },
+      "video_url": {
+       "type": "string",
+       "title": "Video URL",
+       "format": "uri"
+      },
+      "keep_original_sound": {
+       "enum": [
+        "yes",
+        "no"
+       ],
+       "type": "string",
+       "title": "Keep original sound",
+       "default": "yes"
+      },
+      "character_orientation": {
+       "enum": [
+        "image",
+        "video"
+       ],
+       "type": "string",
+       "title": "Character orientation",
+       "default": "video",
+       "description": "Generate the orientation of the characters in the video, which can be selected to match the image or the video"
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/kling-2-6-motion-control/std"
+   }
+  ]
+ },
+ {
+  "slug": "kling-3",
+  "vendor": "Kling",
+  "name": "Kling 3.0",
+  "workflows": [
+   {
+    "endpoint": "kling-video/v3.0/4k/image-to-video",
+    "title": "Kling 3.0 \u2014 4K \u00b7 Image to video",
+    "notes": [
+     "image_url is the first frame; last_image_url optionally sets the final frame.",
+     "Always include a non-empty top-level prompt, including when using multi_prompt. Keep it within 2,500 characters; longer prompts are truncated.",
+     "For custom shots, set multi_shots to true and provide 1\u20136 multi_prompt objects. Each object needs prompt (at most 512 characters) and duration (a positive integer from 1 to 15 seconds).",
+     "Custom-shot durations are summed for generation and billing; the top-level duration does not override that sum. With multi_shots enabled and no custom shots, the top-level duration is retained.",
+     "Native audio uses sound: on or off and defaults to on.",
+     "elements contains Kling element IDs as decimal strings. Each ID must belong to the account making the request; arbitrary provider IDs are rejected.",
+     "The example.com media URLs are placeholders. Replace them with public HTTPS URLs to your own media before submitting."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Kling 3.0 Playground",
+     "required": [
+      "image_url"
+     ],
+     "properties": {
+      "sound": {
+       "enum": [
+        "on",
+        "off"
+       ],
+       "type": "string",
+       "title": "Generate sound",
+       "default": "on"
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 3
+      },
+      "elements": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "cfg_scale": {
+       "type": "number",
+       "title": "CFG Scale",
+       "default": 0.5,
+       "maximum": 1,
+       "minimum": 0,
+       "multipleOf": 0.01
+      },
+      "image_url": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      },
+      "multi_shots": {
+       "type": "boolean",
+       "default": false
+      },
+      "multi_prompt": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "prompt": {
+          "type": "string",
+          "maxLength": 512
+         },
+         "duration": {
+          "type": "integer",
+          "maximum": 15,
+          "minimum": 1
+         }
+        }
+       },
+       "maxItems": 6,
+       "minItems": 0
+      },
+      "last_image_url": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/kling-3/4k-image-to-video"
+   },
+   {
+    "endpoint": "kling-video/v3.0/4k/text-to-video",
+    "title": "Kling 3.0 \u2014 4K \u00b7 Text to video",
+    "notes": [
+     "Always include a non-empty top-level prompt, including when using multi_prompt. Keep it within 2,500 characters; longer prompts are truncated.",
+     "For custom shots, set multi_shots to true and provide 1\u20136 multi_prompt objects. Each object needs prompt (at most 512 characters) and duration (a positive integer from 1 to 15 seconds).",
+     "Custom-shot durations are summed for generation and billing; the top-level duration does not override that sum. With multi_shots enabled and no custom shots, the top-level duration is retained.",
+     "Native audio uses sound: on or off and defaults to on.",
+     "elements contains Kling element IDs as decimal strings. Each ID must belong to the account making the request; arbitrary provider IDs are rejected."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Kling 3.0 Playground",
+     "properties": {
+      "sound": {
+       "enum": [
+        "on",
+        "off"
+       ],
+       "type": "string",
+       "title": "Generate sound",
+       "default": "on"
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 3
+      },
+      "elements": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "cfg_scale": {
+       "type": "number",
+       "title": "CFG Scale",
+       "default": 0.5,
+       "maximum": 1,
+       "minimum": 0,
+       "multipleOf": 0.01
+      },
+      "multi_shots": {
+       "type": "boolean",
+       "default": false
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "9:16",
+        "1:1"
+       ],
+       "type": "string",
+       "title": "Aspect ratio",
+       "default": "16:9"
+      },
+      "multi_prompt": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "prompt": {
+          "type": "string",
+          "maxLength": 512
+         },
+         "duration": {
+          "type": "integer",
+          "maximum": 15,
+          "minimum": 1
+         }
+        }
+       },
+       "maxItems": 6,
+       "minItems": 0
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/kling-3/4k-text-to-video"
+   },
+   {
+    "endpoint": "kling-video/v3.0/pro/image-to-video",
+    "title": "Kling 3.0 \u2014 Pro \u00b7 Image to video",
+    "notes": [
+     "image_url is the first frame; last_image_url optionally sets the final frame.",
+     "Always include a non-empty top-level prompt, including when using multi_prompt. Keep it within 2,500 characters; longer prompts are truncated.",
+     "For custom shots, set multi_shots to true and provide 1\u20136 multi_prompt objects. Each object needs prompt (at most 512 characters) and duration (a positive integer from 1 to 15 seconds).",
+     "Custom-shot durations are summed for generation and billing; the top-level duration does not override that sum. With multi_shots enabled and no custom shots, the top-level duration is retained.",
+     "Native audio uses sound: on or off and defaults to on.",
+     "elements contains Kling element IDs as decimal strings. Each ID must belong to the account making the request; arbitrary provider IDs are rejected.",
+     "The example.com media URLs are placeholders. Replace them with public HTTPS URLs to your own media before submitting."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Kling 3.0 Playground",
+     "required": [
+      "image_url"
+     ],
+     "properties": {
+      "sound": {
+       "enum": [
+        "on",
+        "off"
+       ],
+       "type": "string",
+       "title": "Generate sound",
+       "default": "on"
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 3
+      },
+      "elements": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "cfg_scale": {
+       "type": "number",
+       "title": "CFG Scale",
+       "default": 0.5,
+       "maximum": 1,
+       "minimum": 0,
+       "multipleOf": 0.01
+      },
+      "image_url": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      },
+      "multi_shots": {
+       "type": "boolean",
+       "default": false
+      },
+      "multi_prompt": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "prompt": {
+          "type": "string",
+          "maxLength": 512
+         },
+         "duration": {
+          "type": "integer",
+          "maximum": 15,
+          "minimum": 1
+         }
+        }
+       },
+       "maxItems": 6,
+       "minItems": 0
+      },
+      "last_image_url": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/kling-3/pro-image-to-video"
+   },
+   {
+    "endpoint": "kling-video/v3.0/pro/text-to-video",
+    "title": "Kling 3.0 \u2014 Pro \u00b7 Text to video",
+    "notes": [
+     "Always include a non-empty top-level prompt, including when using multi_prompt. Keep it within 2,500 characters; longer prompts are truncated.",
+     "For custom shots, set multi_shots to true and provide 1\u20136 multi_prompt objects. Each object needs prompt (at most 512 characters) and duration (a positive integer from 1 to 15 seconds).",
+     "Custom-shot durations are summed for generation and billing; the top-level duration does not override that sum. With multi_shots enabled and no custom shots, the top-level duration is retained.",
+     "Native audio uses sound: on or off and defaults to on.",
+     "elements contains Kling element IDs as decimal strings. Each ID must belong to the account making the request; arbitrary provider IDs are rejected."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Kling 3.0 Playground",
+     "properties": {
+      "sound": {
+       "enum": [
+        "on",
+        "off"
+       ],
+       "type": "string",
+       "title": "Generate sound",
+       "default": "on"
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 3
+      },
+      "elements": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "cfg_scale": {
+       "type": "number",
+       "title": "CFG Scale",
+       "default": 0.5,
+       "maximum": 1,
+       "minimum": 0,
+       "multipleOf": 0.01
+      },
+      "multi_shots": {
+       "type": "boolean",
+       "default": false
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "9:16",
+        "1:1"
+       ],
+       "type": "string",
+       "title": "Aspect ratio",
+       "default": "16:9"
+      },
+      "multi_prompt": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "prompt": {
+          "type": "string",
+          "maxLength": 512
+         },
+         "duration": {
+          "type": "integer",
+          "maximum": 15,
+          "minimum": 1
+         }
+        }
+       },
+       "maxItems": 6,
+       "minItems": 0
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/kling-3/pro-text-to-video"
+   },
+   {
+    "endpoint": "kling-video/v3.0/std/image-to-video",
+    "title": "Kling 3.0 \u2014 Standard \u00b7 Image to video",
+    "notes": [
+     "image_url is the first frame; last_image_url optionally sets the final frame.",
+     "Always include a non-empty top-level prompt, including when using multi_prompt. Keep it within 2,500 characters; longer prompts are truncated.",
+     "For custom shots, set multi_shots to true and provide 1\u20136 multi_prompt objects. Each object needs prompt (at most 512 characters) and duration (a positive integer from 1 to 15 seconds).",
+     "Custom-shot durations are summed for generation and billing; the top-level duration does not override that sum. With multi_shots enabled and no custom shots, the top-level duration is retained.",
+     "Native audio uses sound: on or off and defaults to on.",
+     "elements contains Kling element IDs as decimal strings. Each ID must belong to the account making the request; arbitrary provider IDs are rejected.",
+     "The example.com media URLs are placeholders. Replace them with public HTTPS URLs to your own media before submitting."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Kling 3.0 Playground",
+     "required": [
+      "image_url"
+     ],
+     "properties": {
+      "sound": {
+       "enum": [
+        "on",
+        "off"
+       ],
+       "type": "string",
+       "title": "Generate sound",
+       "default": "on"
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 3
+      },
+      "elements": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "cfg_scale": {
+       "type": "number",
+       "title": "CFG Scale",
+       "default": 0.5,
+       "maximum": 1,
+       "minimum": 0,
+       "multipleOf": 0.01
+      },
+      "image_url": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      },
+      "multi_shots": {
+       "type": "boolean",
+       "default": false
+      },
+      "multi_prompt": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "prompt": {
+          "type": "string",
+          "maxLength": 512
+         },
+         "duration": {
+          "type": "integer",
+          "maximum": 15,
+          "minimum": 1
+         }
+        }
+       },
+       "maxItems": 6,
+       "minItems": 1
+      },
+      "last_image_url": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/kling-3/standard-image-to-video"
+   },
+   {
+    "endpoint": "kling-video/v3.0/std/text-to-video",
+    "title": "Kling 3.0 \u2014 Standard \u00b7 Text to video",
+    "notes": [
+     "Always include a non-empty top-level prompt, including when using multi_prompt. Keep it within 2,500 characters; longer prompts are truncated.",
+     "For custom shots, set multi_shots to true and provide 1\u20136 multi_prompt objects. Each object needs prompt (at most 512 characters) and duration (a positive integer from 1 to 15 seconds).",
+     "Custom-shot durations are summed for generation and billing; the top-level duration does not override that sum. With multi_shots enabled and no custom shots, the top-level duration is retained.",
+     "Native audio uses sound: on or off and defaults to on.",
+     "elements contains Kling element IDs as decimal strings. Each ID must belong to the account making the request; arbitrary provider IDs are rejected."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Kling 3.0 Playground",
+     "properties": {
+      "sound": {
+       "enum": [
+        "on",
+        "off"
+       ],
+       "type": "string",
+       "title": "Generate sound",
+       "default": "on"
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 3
+      },
+      "elements": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "cfg_scale": {
+       "type": "number",
+       "title": "CFG Scale",
+       "default": 0.5,
+       "maximum": 1,
+       "minimum": 0,
+       "multipleOf": 0.01
+      },
+      "multi_shots": {
+       "type": "boolean",
+       "default": false
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "9:16",
+        "1:1"
+       ],
+       "type": "string",
+       "title": "Aspect ratio",
+       "default": "16:9"
+      },
+      "multi_prompt": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "prompt": {
+          "type": "string",
+          "maxLength": 512
+         },
+         "duration": {
+          "type": "integer",
+          "maximum": 15,
+          "minimum": 1
+         }
+        }
+       },
+       "maxItems": 6,
+       "minItems": 1
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/kling-3/standard-text-to-video"
+   },
+   {
+    "endpoint": "kling-video/v3.0-turbo/image-to-video",
+    "title": "Kling 3.0 \u2014 Turbo \u00b7 Image to video",
+    "notes": [
+     "duration accepts integers from 3 to 15 seconds. resolution accepts 720p or 1080p and defaults to 720p.",
+     "This endpoint has no sound, multi_shots, elements, or last-frame field.",
+     "Keep prompt within 2,500 characters; longer prompts are truncated.",
+     "The example.com media URLs are placeholders. Replace them with public HTTPS URLs to your own media before submitting."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Kling 3.0 Turbo",
+     "required": [
+      "prompt",
+      "image_url"
+     ],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 3
+      },
+      "image_url": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      },
+      "resolution": {
+       "enum": [
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "title": "Resolution",
+       "default": "720p"
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/kling-3/turbo-image-to-video"
+   },
+   {
+    "endpoint": "kling-video/v3.0-turbo/text-to-video",
+    "title": "Kling 3.0 \u2014 Turbo \u00b7 Text to video",
+    "notes": [
+     "duration accepts integers from 3 to 15 seconds. resolution accepts 720p or 1080p and defaults to 720p.",
+     "This endpoint has no sound, multi_shots, elements, or last-frame field.",
+     "aspect_ratio accepts 16:9, 9:16, or 1:1 and defaults to 16:9.",
+     "Keep prompt within 3,072 characters; longer prompts are truncated."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Kling 3.0 Turbo",
+     "required": [
+      "prompt"
+     ],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 3
+      },
+      "resolution": {
+       "enum": [
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "title": "Resolution",
+       "default": "720p"
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "9:16",
+        "1:1"
+       ],
+       "type": "string",
+       "title": "Aspect ratio",
+       "default": "16:9"
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/kling-3/turbo-text-to-video"
+   }
+  ]
+ },
+ {
+  "slug": "kling-3-motion-control",
+  "vendor": "Kling",
+  "name": "Kling 3.0 Motion Control",
+  "workflows": [
+   {
+    "endpoint": "kling-video/v3/motion-control/pro",
+    "title": "Kling 3.0 Motion Control \u2014 Pro",
+    "notes": [
+     "Use a motion-reference video from 3 to 30 seconds long. The output duration follows the source video; do not send a separate duration field.",
+     "Use a character image up to 10 MB with each dimension between 300 and 65,536 pixels. Images outside the 0.4\u20132.5 width-to-height range are adjusted before generation.",
+     "Videos larger than 100 MB are compressed before generation.",
+     "Set character_orientation to image or video. keep_original_sound uses the strings yes and no, with yes as the default.",
+     "The example.com media URLs are placeholders. Replace them with public HTTPS URLs to your own media before submitting."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Kling V3 Motion Control Playground",
+     "required": [
+      "image_url",
+      "video_url"
+     ],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "default": "",
+       "description": "Write your prompt here"
+      },
+      "image_url": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      },
+      "video_url": {
+       "type": "string",
+       "title": "Video URL",
+       "format": "uri"
+      },
+      "keep_original_sound": {
+       "enum": [
+        "yes",
+        "no"
+       ],
+       "type": "string",
+       "title": "Keep original sound",
+       "default": "yes"
+      },
+      "character_orientation": {
+       "enum": [
+        "image",
+        "video"
+       ],
+       "type": "string",
+       "title": "Character orientation",
+       "default": "video",
+       "description": "Generate the orientation of the characters in the video, which can be selected to match the image or the video"
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/kling-3-motion-control/pro"
+   },
+   {
+    "endpoint": "kling-video/v3/motion-control/std",
+    "title": "Kling 3.0 Motion Control \u2014 Standard",
+    "notes": [
+     "Use a motion-reference video from 3 to 30 seconds long. The output duration follows the source video; do not send a separate duration field.",
+     "Use a character image up to 10 MB with each dimension between 300 and 65,536 pixels. Images outside the 0.4\u20132.5 width-to-height range are adjusted before generation.",
+     "Videos larger than 100 MB are compressed before generation.",
+     "Set character_orientation to image or video. keep_original_sound uses the strings yes and no, with yes as the default.",
+     "The example.com media URLs are placeholders. Replace them with public HTTPS URLs to your own media before submitting."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Kling V3 Motion Control Playground",
+     "required": [
+      "image_url",
+      "video_url"
+     ],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "default": "",
+       "description": "Write your prompt here"
+      },
+      "image_url": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      },
+      "video_url": {
+       "type": "string",
+       "title": "Video URL",
+       "format": "uri"
+      },
+      "keep_original_sound": {
+       "enum": [
+        "yes",
+        "no"
+       ],
+       "type": "string",
+       "title": "Keep original sound",
+       "default": "yes"
+      },
+      "character_orientation": {
+       "enum": [
+        "image",
+        "video"
+       ],
+       "type": "string",
+       "title": "Character orientation",
+       "default": "video",
+       "description": "Generate the orientation of the characters in the video, which can be selected to match the image or the video"
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/kling-3-motion-control/std"
+   }
+  ]
+ },
+ {
+  "slug": "kling-o3",
+  "vendor": "Kling",
+  "name": "Kling O3",
+  "workflows": [
+   {
+    "endpoint": "kling-video/o3/first-last-frame",
+    "title": "Kling O3 \u2014 First last frame",
+    "notes": [
+     "first_frame_url supplies the starting frame; last_frame_url is optional. These names differ from the image_url and last_image_url fields on Kling 3.0 image-to-video.",
+     "For a single shot, set multi_shots to false and provide prompt. For multiple shots, set multi_shots to true and provide 1\u20136 multi_prompt objects, each containing prompt and a positive integer duration.",
+     "Always include a non-empty top-level prompt, including when using multi_prompt.",
+     "Each shot prompt is limited to 512 characters. Custom-shot durations are summed for generation and billing; the top-level duration does not override that sum.",
+     "Native audio uses sound: on or off and defaults to off.",
+     "Keep the top-level prompt within 2,500 characters; longer prompts are truncated.",
+     "The example.com media URLs are placeholders. Replace them with public HTTPS URLs to your own media before submitting."
+    ],
+    "schema": {
+     "if": {
+      "properties": {
+       "multi_shots": {
+        "const": true
+       }
+      }
+     },
+     "else": {
+      "required": [
+       "prompt",
+       "first_frame_url"
+      ]
+     },
+     "then": {
+      "required": [
+       "multi_prompt",
+       "first_frame_url"
+      ]
+     },
+     "type": "object",
+     "title": "Kling O3 Playground",
+     "properties": {
+      "mode": {
+       "enum": [
+        "std",
+        "pro",
+        "4k"
+       ],
+       "type": "string",
+       "default": "pro"
+      },
+      "sound": {
+       "enum": [
+        "on",
+        "off"
+       ],
+       "type": "string",
+       "default": "off"
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 3
+      },
+      "multi_shots": {
+       "type": "boolean",
+       "default": false
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "9:16",
+        "1:1"
+       ],
+       "type": "string"
+      },
+      "multi_prompt": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "prompt": {
+          "type": "string",
+          "maxLength": 512
+         },
+         "duration": {
+          "type": "integer",
+          "maximum": 15,
+          "minimum": 1
+         }
+        }
+       },
+       "maxItems": 6,
+       "minItems": 1
+      },
+      "last_frame_url": {
+       "type": "string",
+       "title": "Last frame URL",
+       "format": "uri"
+      },
+      "first_frame_url": {
+       "type": "string",
+       "title": "First frame URL",
+       "format": "uri"
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/kling-o3/first-last-frame"
+   },
+   {
+    "endpoint": "kling-video/o3/image-reference",
+    "title": "Kling O3 \u2014 Image reference",
+    "notes": [
+     "Supply image_urls for visual references. Reference images are optional in the schema.",
+     "For a single shot, set multi_shots to false and provide prompt. For multiple shots, set multi_shots to true and provide 1\u20136 multi_prompt objects, each containing prompt and a positive integer duration.",
+     "Always include a non-empty top-level prompt, including when using multi_prompt.",
+     "Each shot prompt is limited to 512 characters. Custom-shot durations are summed for generation and billing; the top-level duration does not override that sum.",
+     "Native audio uses sound: on or off and defaults to off.",
+     "A multi_prompt shot must last at least 1 second; zero-second shots are rejected even though the schema permits zero.",
+     "When multi_shots is true, multi_prompt is required even with shot_type set to intelligent.",
+     "Keep the top-level prompt within 2,500 characters; longer prompts are truncated.",
+     "elements contains Kling element IDs as decimal strings. Each ID must belong to the account making the request; arbitrary provider IDs are rejected.",
+     "The example.com media URLs are placeholders. Replace them with public HTTPS URLs to your own media before submitting."
+    ],
+    "schema": {
+     "if": {
+      "properties": {
+       "multi_shots": {
+        "const": true
+       }
+      }
+     },
+     "else": {
+      "required": [
+       "prompt"
+      ]
+     },
+     "then": {
+      "required": [
+       "multi_prompt"
+      ]
+     },
+     "type": "object",
+     "title": "Kling Omni Playground",
+     "properties": {
+      "mode": {
+       "enum": [
+        "std",
+        "pro",
+        "4k"
+       ],
+       "type": "string",
+       "default": "std"
+      },
+      "sound": {
+       "enum": [
+        "on",
+        "off"
+       ],
+       "type": "string",
+       "default": "off"
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 3
+      },
+      "elements": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "shot_type": {
+       "enum": [
+        "customize",
+        "intelligent"
+       ],
+       "type": "string",
+       "default": "customize"
+      },
+      "image_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "title": "Image URL",
+        "format": "uri"
+       }
+      },
+      "multi_shots": {
+       "type": "boolean",
+       "default": false
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "9:16",
+        "1:1"
+       ],
+       "type": "string"
+      },
+      "multi_prompt": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "prompt": {
+          "type": "string",
+          "maxLength": 512
+         },
+         "duration": {
+          "type": "integer",
+          "maximum": 15,
+          "minimum": 0
+         }
+        }
+       },
+       "maxItems": 6,
+       "minItems": 1
+      },
+      "last_frame_url": {
+       "type": "string",
+       "title": "Last frame URL",
+       "format": "uri"
+      },
+      "first_frame_url": {
+       "type": "string",
+       "title": "First frame URL",
+       "format": "uri"
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/kling-o3/image-reference"
+   },
+   {
+    "endpoint": "kling-video/o3/video-edit",
+    "title": "Kling O3 \u2014 Video edit",
+    "notes": [
+     "Supply exactly one source video from 3 to 15.5 seconds long and no larger than 200 MB. Duration is derived from the video; do not send a separate duration field.",
+     "You may also supply up to four image_urls and up to four elements.",
+     "Keep the top-level prompt within 2,500 characters; longer prompts are truncated.",
+     "elements contains Kling element IDs as decimal strings. Each ID must belong to the account making the request; arbitrary provider IDs are rejected.",
+     "The example.com media URLs are placeholders. Replace them with public HTTPS URLs to your own media before submitting."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Kling O3 Playground",
+     "required": [
+      "prompt",
+      "video_urls"
+     ],
+     "properties": {
+      "mode": {
+       "enum": [
+        "std",
+        "pro",
+        "4k"
+       ],
+       "type": "string",
+       "default": "pro"
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "elements": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       },
+       "maxItems": 4,
+       "minItems": 0
+      },
+      "image_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "title": "Image URL",
+        "format": "uri"
+       },
+       "maxItems": 4,
+       "minItems": 0
+      },
+      "video_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "title": "Video URL",
+        "format": "uri"
+       },
+       "maxItems": 1,
+       "minItems": 1
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/kling-o3/video-edit"
+   },
+   {
+    "endpoint": "kling-video/o3/video-reference",
+    "title": "Kling O3 \u2014 Video reference",
+    "notes": [
+     "Supply exactly one video reference. duration controls the generated clip and accepts integer values from 3 to 10 seconds.",
+     "You may also supply up to four image_urls and up to four elements.",
+     "Keep the top-level prompt within 2,500 characters; longer prompts are truncated.",
+     "elements contains Kling element IDs as decimal strings. Each ID must belong to the account making the request; arbitrary provider IDs are rejected.",
+     "The example.com media URLs are placeholders. Replace them with public HTTPS URLs to your own media before submitting."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Kling O3 Playground",
+     "required": [
+      "prompt",
+      "video_urls"
+     ],
+     "properties": {
+      "mode": {
+       "enum": [
+        "std",
+        "pro"
+       ],
+       "type": "string",
+       "default": "pro"
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 10,
+       "minimum": 3
+      },
+      "elements": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       },
+       "maxItems": 4,
+       "minItems": 0
+      },
+      "image_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "title": "Image URL",
+        "format": "uri"
+       },
+       "maxItems": 4,
+       "minItems": 0
+      },
+      "video_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "title": "Video URL",
+        "format": "uri"
+       },
+       "maxItems": 1,
+       "minItems": 1
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "9:16",
+        "1:1"
+       ],
+       "type": "string"
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/kling-o3/video-reference"
+   }
+  ]
+ },
+ {
+  "slug": "kling-omni",
+  "vendor": "Kling",
+  "name": "Kling Omni",
+  "workflows": [
+   {
+    "endpoint": "kling-video/omni/first-last-frame",
+    "title": "Kling Omni \u2014 First last frame",
+    "notes": [
+     "first_frame_url supplies the starting frame; last_frame_url is optional. These names differ from the image_url and last_image_url fields on Kling 3.0 image-to-video.",
+     "Keep the top-level prompt within 2,500 characters; longer prompts are truncated.",
+     "The example.com media URLs are placeholders. Replace them with public HTTPS URLs to your own media before submitting."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Kling Omni Playground",
+     "required": [
+      "prompt",
+      "first_frame_url"
+     ],
+     "properties": {
+      "mode": {
+       "enum": [
+        "std",
+        "pro"
+       ],
+       "type": "string",
+       "default": "pro"
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "enum": [
+        5,
+        10
+       ],
+       "type": "integer",
+       "title": "Duration",
+       "default": 5
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "9:16",
+        "1:1"
+       ],
+       "type": "string",
+       "default": "16:9"
+      },
+      "last_frame_url": {
+       "type": "string",
+       "title": "Last frame URL",
+       "format": "uri"
+      },
+      "first_frame_url": {
+       "type": "string",
+       "title": "First frame URL",
+       "format": "uri"
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/kling-omni/first-last-frame"
+   },
+   {
+    "endpoint": "kling-video/omni/image-reference",
+    "title": "Kling Omni \u2014 Image reference",
+    "notes": [
+     "Supply image_urls for visual references. Reference images are optional in the schema.",
+     "Keep the top-level prompt within 2,500 characters; longer prompts are truncated.",
+     "elements contains Kling element IDs as decimal strings. Each ID must belong to the account making the request; arbitrary provider IDs are rejected.",
+     "The example.com media URLs are placeholders. Replace them with public HTTPS URLs to your own media before submitting."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Kling Omni Playground",
+     "required": [
+      "prompt"
+     ],
+     "properties": {
+      "mode": {
+       "enum": [
+        "std",
+        "pro"
+       ],
+       "type": "string",
+       "default": "pro"
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 10,
+       "minimum": 3
+      },
+      "elements": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "image_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "title": "Image URL",
+        "format": "uri"
+       }
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "9:16",
+        "1:1"
+       ],
+       "type": "string",
+       "default": "16:9"
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/kling-omni/image-reference"
+   },
+   {
+    "endpoint": "kling-video/omni/video-edit",
+    "title": "Kling Omni \u2014 Video edit",
+    "notes": [
+     "Supply exactly one source video from 3 to 10 seconds long and no larger than 200 MB. Duration is derived from the video; do not send a separate duration field.",
+     "You may also supply up to four image_urls and up to four elements.",
+     "Keep the top-level prompt within 2,500 characters; longer prompts are truncated.",
+     "elements contains Kling element IDs as decimal strings. Each ID must belong to the account making the request; arbitrary provider IDs are rejected.",
+     "The example.com media URLs are placeholders. Replace them with public HTTPS URLs to your own media before submitting."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Kling Omni Playground",
+     "required": [
+      "prompt",
+      "video_urls"
+     ],
+     "properties": {
+      "mode": {
+       "enum": [
+        "std",
+        "pro"
+       ],
+       "type": "string",
+       "default": "pro"
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "elements": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       },
+       "maxItems": 4,
+       "minItems": 0
+      },
+      "image_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "title": "Image URL",
+        "format": "uri"
+       },
+       "maxItems": 4,
+       "minItems": 0
+      },
+      "video_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "title": "Video URL",
+        "format": "uri"
+       },
+       "maxItems": 1,
+       "minItems": 1
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/kling-omni/video-edit"
+   },
+   {
+    "endpoint": "kling-video/omni/video-reference",
+    "title": "Kling Omni \u2014 Video reference",
+    "notes": [
+     "Supply exactly one video reference. duration controls the generated clip and accepts integer values from 3 to 10 seconds.",
+     "You may also supply up to four image_urls and up to four elements.",
+     "Keep the top-level prompt within 2,500 characters; longer prompts are truncated.",
+     "elements contains Kling element IDs as decimal strings. Each ID must belong to the account making the request; arbitrary provider IDs are rejected.",
+     "The example.com media URLs are placeholders. Replace them with public HTTPS URLs to your own media before submitting."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Kling Omni Playground",
+     "required": [
+      "prompt",
+      "video_urls"
+     ],
+     "properties": {
+      "mode": {
+       "enum": [
+        "std",
+        "pro"
+       ],
+       "type": "string",
+       "default": "pro"
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "mode": {
+        "enum": [
+         "std",
+         "pro"
+        ],
+        "type": "string",
+        "default": "pro"
+       },
+       "type": "integer",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 10,
+       "minimum": 3
+      },
+      "elements": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       },
+       "maxItems": 4,
+       "minItems": 0
+      },
+      "image_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "title": "Image URL",
+        "format": "uri"
+       },
+       "maxItems": 4,
+       "minItems": 0
+      },
+      "video_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "title": "Video URL",
+        "format": "uri"
+       },
+       "maxItems": 1,
+       "minItems": 1
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "9:16",
+        "1:1"
+       ],
+       "type": "string",
+       "default": "16:9"
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/kling-omni/video-reference"
+   }
+  ]
+ },
+ {
+  "slug": "happy-horse-1",
+  "vendor": "Alibaba",
+  "name": "Happy Horse 1.0",
+  "workflows": [
+   {
+    "endpoint": "alibaba/happy-horse/image-to-video",
+    "title": "Happy Horse 1.0 \u2014 Image to video",
+    "notes": [
+     "The prompt is optional. This endpoint accepts one first-frame image; it does not support a last-frame image."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Happy horse",
+     "required": [
+      "image_url"
+     ],
+     "properties": {
+      "seed": {
+       "type": "integer",
+       "maximum": 2147483646,
+       "minimum": 1
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 2
+      },
+      "image_url": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      },
+      "resolution": {
+       "enum": [
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "default": "720p"
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/happy-horse-1/image-to-video"
+   },
+   {
+    "endpoint": "alibaba/happy-horse/reference-to-video",
+    "title": "Happy Horse 1.0 \u2014 Reference to video",
+    "notes": [
+     "Provide 1\u20139 reference images. This limit is enforced at submission even though the stored JSON Schema does not set minItems or maxItems. Reference videos are unsupported."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Happy horse",
+     "required": [
+      "image_urls",
+      "prompt"
+     ],
+     "properties": {
+      "seed": {
+       "type": "integer",
+       "maximum": 2147483646,
+       "minimum": 1
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 2
+      },
+      "image_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "title": "Image URL",
+        "format": "uri"
+       }
+      },
+      "resolution": {
+       "enum": [
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "default": "720p"
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/happy-horse-1/reference-to-video"
+   },
+   {
+    "endpoint": "alibaba/happy-horse/text-to-video",
+    "title": "Happy Horse 1.0 \u2014 Text to video",
+    "notes": [
+     "The prompt must contain text; an empty string is rejected during submission."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Happy Horse",
+     "required": [
+      "prompt"
+     ],
+     "properties": {
+      "seed": {
+       "type": "integer",
+       "maximum": 2147483646,
+       "minimum": 1
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 3
+      },
+      "resolution": {
+       "enum": [
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "default": "720p"
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "9:16",
+        "1:1",
+        "4:3",
+        "3:4"
+       ],
+       "type": "string",
+       "title": "Aspect Ratio",
+       "default": "16:9"
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/happy-horse-1/text-to-video"
+   }
+  ]
+ },
+ {
+  "slug": "happy-horse-1-1",
+  "vendor": "Alibaba",
+  "name": "HappyHorse 1.1",
+  "workflows": [
+   {
+    "endpoint": "alibaba/happy-horse/v1.1/image-to-video",
+    "title": "HappyHorse 1.1 \u2014 Image to video",
+    "notes": [
+     "The prompt is optional. This endpoint accepts one first-frame image; it does not support a last-frame image."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Happy horse",
+     "required": [
+      "image_url"
+     ],
+     "properties": {
+      "seed": {
+       "type": "integer",
+       "maximum": 2147483646,
+       "minimum": 1
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 2
+      },
+      "image_url": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      },
+      "resolution": {
+       "enum": [
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "default": "1080p"
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/happy-horse-1-1/image-to-video"
+   },
+   {
+    "endpoint": "alibaba/happy-horse/v1.1/reference-to-video",
+    "title": "HappyHorse 1.1 \u2014 Reference to video",
+    "notes": [
+     "Provide 1\u20139 reference images. This limit is enforced at submission even though the stored JSON Schema does not set minItems or maxItems. Reference videos are unsupported."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Happy horse",
+     "required": [
+      "image_urls",
+      "prompt"
+     ],
+     "properties": {
+      "seed": {
+       "type": "integer",
+       "maximum": 2147483646,
+       "minimum": 1
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 2
+      },
+      "image_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "title": "Image URL",
+        "format": "uri"
+       }
+      },
+      "resolution": {
+       "enum": [
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "default": "1080p"
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/happy-horse-1-1/reference-to-video"
+   },
+   {
+    "endpoint": "alibaba/happy-horse/v1.1/text-to-video",
+    "title": "HappyHorse 1.1 \u2014 Text to video",
+    "notes": [
+     "The prompt must contain text; an empty string is rejected during submission."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Happy Horse",
+     "required": [
+      "prompt"
+     ],
+     "properties": {
+      "seed": {
+       "type": "integer",
+       "maximum": 2147483646,
+       "minimum": 1
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 3
+      },
+      "resolution": {
+       "enum": [
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "default": "1080p"
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "9:16",
+        "1:1",
+        "4:3",
+        "3:4"
+       ],
+       "type": "string",
+       "title": "Aspect Ratio",
+       "default": "16:9"
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/happy-horse-1-1/text-to-video"
+   }
+  ]
+ },
+ {
+  "slug": "wan-3",
+  "vendor": "Alibaba",
+  "name": "Wan 3.0",
+  "workflows": [
+   {
+    "endpoint": "alibaba/wan-3.0/image-to-video",
+    "title": "Wan 3.0 \u2014 Image to video",
+    "notes": [
+     "Use image_url for the first frame and optional end_image_url for the last frame. Reference arrays belong to the reference-to-video endpoint.",
+     "The schema accepts seed=0, but the current implementation only forwards a nonzero seed."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Wan 3.0 Image to Video",
+     "required": [
+      "prompt",
+      "image_url"
+     ],
+     "properties": {
+      "seed": {
+       "type": "integer",
+       "title": "Seed",
+       "maximum": 2147483647,
+       "minimum": 0
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration (sec)",
+       "default": 5,
+       "maximum": 30,
+       "minimum": 2,
+       "description": "2-30 seconds."
+      },
+      "image_url": {
+       "type": "string",
+       "title": "First Frame",
+       "format": "uri"
+      },
+      "resolution": {
+       "enum": [
+        "480p",
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "title": "Resolution",
+       "default": "1080p"
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "4:3",
+        "1:1",
+        "3:4",
+        "9:16",
+        "adaptive"
+       ],
+       "type": "string",
+       "title": "Aspect Ratio",
+       "default": "adaptive"
+      },
+      "end_image_url": {
+       "type": "string",
+       "title": "Last Frame",
+       "format": "uri"
+      },
+      "generate_audio": {
+       "type": "boolean",
+       "title": "Sound",
+       "default": true
+      },
+      "enable_thinking": {
+       "type": "boolean",
+       "title": "Deep Thinking",
+       "default": false
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/wan-3/image-to-video"
+   },
+   {
+    "endpoint": "alibaba/wan-3.0/reference-to-video",
+    "title": "Wan 3.0 \u2014 Reference to video",
+    "notes": [
+     "Reference media are optional in the stored schema: only prompt is required. The example includes an image to demonstrate reference mode.",
+     "Send either file_url or link_url. A document or web-page reference automatically enables thinking; when both are sent, file_url takes precedence.",
+     "Reference video clips must be 1\u201330 seconds each and total at most 30 seconds. Reference audio must be WAV or MP3 and total at most 30 seconds, as specified in the production schema.",
+     "The schema accepts seed=0, but the current implementation only forwards a nonzero seed."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Wan 3.0 Reference to Video",
+     "required": [
+      "prompt"
+     ],
+     "properties": {
+      "seed": {
+       "type": "integer",
+       "title": "Seed",
+       "maximum": 2147483647,
+       "minimum": 0
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration (sec)",
+       "default": 5,
+       "maximum": 30,
+       "minimum": 2,
+       "description": "2-30 seconds."
+      },
+      "file_url": {
+       "type": "string",
+       "title": "Reference Document",
+       "format": "uri",
+       "description": "One document (docx/xlsx/pptx/pdf/md). Forces deep thinking."
+      },
+      "link_url": {
+       "type": "string",
+       "title": "Reference Web Page",
+       "format": "uri",
+       "description": "One public page. Forces deep thinking. Not combinable with file_url."
+      },
+      "audio_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri"
+       },
+       "title": "Reference Audio",
+       "maxItems": 5,
+       "description": "Up to 5 files, 30s total. WAV or MP3."
+      },
+      "image_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri"
+       },
+       "title": "Reference Images",
+       "maxItems": 10
+      },
+      "resolution": {
+       "enum": [
+        "480p",
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "title": "Resolution",
+       "default": "1080p"
+      },
+      "video_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri"
+       },
+       "title": "Reference Videos",
+       "maxItems": 5,
+       "description": "Up to 5 clips, 30s total, each 1-30s."
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "4:3",
+        "1:1",
+        "3:4",
+        "9:16",
+        "adaptive"
+       ],
+       "type": "string",
+       "title": "Aspect Ratio",
+       "default": "adaptive"
+      },
+      "generate_audio": {
+       "type": "boolean",
+       "title": "Sound",
+       "default": true
+      },
+      "enable_thinking": {
+       "type": "boolean",
+       "title": "Deep Thinking",
+       "default": false
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/wan-3/reference-to-video"
+   },
+   {
+    "endpoint": "alibaba/wan-3.0/text-to-video",
+    "title": "Wan 3.0 \u2014 Text to video",
+    "notes": [
+     "This endpoint generates from text; use the separate image or reference endpoint for media inputs.",
+     "The schema accepts seed=0, but the current implementation only forwards a nonzero seed."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Wan 3.0 Text to Video",
+     "required": [
+      "prompt"
+     ],
+     "properties": {
+      "seed": {
+       "type": "integer",
+       "title": "Seed",
+       "maximum": 2147483647,
+       "minimum": 0
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration (sec)",
+       "default": 5,
+       "maximum": 30,
+       "minimum": 2,
+       "description": "2-30 seconds."
+      },
+      "resolution": {
+       "enum": [
+        "480p",
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "title": "Resolution",
+       "default": "1080p"
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "4:3",
+        "1:1",
+        "3:4",
+        "9:16",
+        "adaptive"
+       ],
+       "type": "string",
+       "title": "Aspect Ratio",
+       "default": "adaptive"
+      },
+      "generate_audio": {
+       "type": "boolean",
+       "title": "Sound",
+       "default": true
+      },
+      "enable_thinking": {
+       "type": "boolean",
+       "title": "Deep Thinking",
+       "default": false
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/wan-3/text-to-video"
+   }
+  ]
+ },
+ {
+  "slug": "wan-3-prime",
+  "vendor": "Alibaba",
+  "name": "Wan 3.0 Prime",
+  "workflows": [
+   {
+    "endpoint": "alibaba/wan-3.0-prime/image-to-video",
+    "title": "Wan 3.0 Prime \u2014 Image to video",
+    "notes": [
+     "Use image_url for the first frame and optional end_image_url for the last frame. Reference arrays belong to the reference-to-video endpoint.",
+     "The schema accepts seed=0, but the current implementation only forwards a nonzero seed."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Wan 3.0 Prime Image to Video",
+     "required": [
+      "prompt",
+      "image_url"
+     ],
+     "properties": {
+      "seed": {
+       "type": "integer",
+       "title": "Seed",
+       "maximum": 2147483647,
+       "minimum": 0
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration (sec)",
+       "default": 5,
+       "maximum": 30,
+       "minimum": 2,
+       "description": "2-30 seconds."
+      },
+      "image_url": {
+       "type": "string",
+       "title": "First Frame",
+       "format": "uri"
+      },
+      "resolution": {
+       "enum": [
+        "480p",
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "title": "Resolution",
+       "default": "1080p"
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "4:3",
+        "1:1",
+        "3:4",
+        "9:16",
+        "adaptive"
+       ],
+       "type": "string",
+       "title": "Aspect Ratio",
+       "default": "adaptive"
+      },
+      "end_image_url": {
+       "type": "string",
+       "title": "Last Frame",
+       "format": "uri"
+      },
+      "generate_audio": {
+       "type": "boolean",
+       "title": "Sound",
+       "default": true
+      },
+      "enable_thinking": {
+       "type": "boolean",
+       "title": "Deep Thinking",
+       "default": false
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/wan-3-prime/image-to-video"
+   },
+   {
+    "endpoint": "alibaba/wan-3.0-prime/reference-to-video",
+    "title": "Wan 3.0 Prime \u2014 Reference to video",
+    "notes": [
+     "Reference media are optional in the stored schema: only prompt is required. The example includes an image to demonstrate reference mode.",
+     "Send either file_url or link_url. A document or web-page reference automatically enables thinking; when both are sent, file_url takes precedence.",
+     "Reference video clips must be 1\u201330 seconds each and total at most 30 seconds. Reference audio must be WAV or MP3 and total at most 30 seconds, as specified in the production schema.",
+     "The schema accepts seed=0, but the current implementation only forwards a nonzero seed."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Wan 3.0 Prime Reference to Video",
+     "required": [
+      "prompt"
+     ],
+     "properties": {
+      "seed": {
+       "type": "integer",
+       "title": "Seed",
+       "maximum": 2147483647,
+       "minimum": 0
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration (sec)",
+       "default": 5,
+       "maximum": 30,
+       "minimum": 2,
+       "description": "2-30 seconds."
+      },
+      "file_url": {
+       "type": "string",
+       "title": "Reference Document",
+       "format": "uri",
+       "description": "One document (docx/xlsx/pptx/pdf/md). Forces deep thinking."
+      },
+      "link_url": {
+       "type": "string",
+       "title": "Reference Web Page",
+       "format": "uri",
+       "description": "One public page. Forces deep thinking. Not combinable with file_url."
+      },
+      "audio_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri"
+       },
+       "title": "Reference Audio",
+       "maxItems": 5,
+       "description": "Up to 5 files, 30s total. WAV or MP3."
+      },
+      "image_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri"
+       },
+       "title": "Reference Images",
+       "maxItems": 10
+      },
+      "resolution": {
+       "enum": [
+        "480p",
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "title": "Resolution",
+       "default": "1080p"
+      },
+      "video_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri"
+       },
+       "title": "Reference Videos",
+       "maxItems": 5,
+       "description": "Up to 5 clips, 30s total, each 1-30s."
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "4:3",
+        "1:1",
+        "3:4",
+        "9:16",
+        "adaptive"
+       ],
+       "type": "string",
+       "title": "Aspect Ratio",
+       "default": "adaptive"
+      },
+      "generate_audio": {
+       "type": "boolean",
+       "title": "Sound",
+       "default": true
+      },
+      "enable_thinking": {
+       "type": "boolean",
+       "title": "Deep Thinking",
+       "default": false
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/wan-3-prime/reference-to-video"
+   },
+   {
+    "endpoint": "alibaba/wan-3.0-prime/text-to-video",
+    "title": "Wan 3.0 Prime \u2014 Text to video",
+    "notes": [
+     "This endpoint generates from text; use the separate image or reference endpoint for media inputs.",
+     "The schema accepts seed=0, but the current implementation only forwards a nonzero seed."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Wan 3.0 Prime Text to Video",
+     "required": [
+      "prompt"
+     ],
+     "properties": {
+      "seed": {
+       "type": "integer",
+       "title": "Seed",
+       "maximum": 2147483647,
+       "minimum": 0
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration (sec)",
+       "default": 5,
+       "maximum": 30,
+       "minimum": 2,
+       "description": "2-30 seconds."
+      },
+      "resolution": {
+       "enum": [
+        "480p",
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "title": "Resolution",
+       "default": "1080p"
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "4:3",
+        "1:1",
+        "3:4",
+        "9:16",
+        "adaptive"
+       ],
+       "type": "string",
+       "title": "Aspect Ratio",
+       "default": "adaptive"
+      },
+      "generate_audio": {
+       "type": "boolean",
+       "title": "Sound",
+       "default": true
+      },
+      "enable_thinking": {
+       "type": "boolean",
+       "title": "Deep Thinking",
+       "default": false
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/wan-3-prime/text-to-video"
+   }
+  ]
+ },
+ {
+  "slug": "cinema-studio-4",
+  "vendor": "Higgsfield",
+  "name": "Cinema Studio 4.0",
+  "workflows": [
+   {
+    "endpoint": "higgsfield/cinema-studio/4.0",
+    "title": "Cinema Studio 4.0 \u2014 Generate",
+    "notes": [
+     "This is the public Cinema Studio 4.0 workflow. It uses text-to-video when references are absent and reference-to-video when any media array is nonempty.",
+     "Omit creative-control fields to let the director choose them automatically; the literal value \"auto\" is not accepted for these enum fields.",
+     "Optional prompt references use one-based tokens such as <<<image_1>>>, <<<video_1>>> and <<<audio_1>>>. Each token must refer to an attached item of the same media type.",
+     "This endpoint produces a new video. Editing and extension use the separate Seedance 2.5 endpoints.",
+     "Reference media are limited to 30 images, 10 videos and 10 audio files, with at most 50 items total. Video and audio may be normalized to separate 30-second total budgets."
+    ],
+    "schema": {
+     "type": "object",
+     "required": [
+      "prompt"
+     ],
+     "properties": {
+      "era": {
+       "enum": [
+        "1960s",
+        "1980s",
+        "1990s",
+        "2000s",
+        "2020s"
+       ],
+       "type": "string"
+      },
+      "genre": {
+       "enum": [
+        "epic",
+        "drama",
+        "noir",
+        "comedy",
+        "horror",
+        "action"
+       ],
+       "type": "string"
+      },
+      "light": {
+       "enum": [
+        "silhouette",
+        "practicals",
+        "window",
+        "overhead-fall",
+        "contre-jour",
+        "soft-cross"
+       ],
+       "type": "string"
+      },
+      "pacing": {
+       "enum": [
+        "chaotic",
+        "dynamic",
+        "calm",
+        "single-shot"
+       ],
+       "type": "string"
+      },
+      "prompt": {
+       "type": "string",
+       "pattern": "\\S",
+       "minLength": 1
+      },
+      "duration": {
+       "type": "integer",
+       "default": 5,
+       "maximum": 30,
+       "minimum": 4
+      },
+      "audio_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri"
+       },
+       "maxItems": 10
+      },
+      "image_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri"
+       },
+       "maxItems": 30
+      },
+      "resolution": {
+       "enum": [
+        "480p",
+        "720p"
+       ],
+       "type": "string",
+       "default": "720p"
+      },
+      "video_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri"
+       },
+       "maxItems": 10
+      },
+      "camera_lens": {
+       "enum": [
+        "clean-sharp",
+        "anamorphic",
+        "vintage-anamorphic",
+        "warm-vintage",
+        "halation-vintage"
+       ],
+       "type": "string"
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "4:3",
+        "1:1",
+        "3:4",
+        "9:16",
+        "21:9"
+       ],
+       "type": "string",
+       "default": "16:9"
+      },
+      "camera_model": {
+       "enum": [
+        "modern",
+        "35mm-film",
+        "8mm-film",
+        "dv-camcorder"
+       ],
+       "type": "string"
+      },
+      "color_palette": {
+       "enum": [
+        "static-noon",
+        "twilight-fable",
+        "back-row-kissing-seats",
+        "on-the-other-side-of-the-porthole",
+        "the-emerald-ambush",
+        "highway-standoff",
+        "the-faded-fresco",
+        "oil-ochre",
+        "the-mountain-convent",
+        "ghost-in-the-code",
+        "pink-velvet",
+        "two-days-to-the-horizon",
+        "industrial-fog",
+        "stairs-go-up",
+        "field-post",
+        "home-is-the-next-gas-station",
+        "glossy-flesh",
+        "the-crimson-ballet",
+        "neon-rain-at-midnight",
+        "the-morning-after-rain",
+        "the-iron-borough",
+        "the-ground",
+        "the-investigation",
+        "turquoise-mirage",
+        "a-dream-in-color",
+        "breakfast-on-schedule",
+        "favela-gold",
+        "a-hotel-for-one",
+        "after-dark",
+        "crimson-vigi",
+        "the-neighbors-saw-everything",
+        "the-grey-channel",
+        "mirage-at-noon",
+        "bubblegum-boulevard",
+        "yellow-room",
+        "the-earth-keeps-things-reluctantly",
+        "tropic-fever-dream",
+        "bioluminescent-night",
+        "dont-turn-it-off-im-watching",
+        "the-silk-curtain-falls",
+        "the-butterfly",
+        "playtime",
+        "wallpaper-romance",
+        "overtime",
+        "the-way-home-is-longer",
+        "everyone-speaks-in-whispers",
+        "runaway-summer",
+        "amber-wasteland",
+        "the-circus",
+        "gasoline-sunset"
+       ],
+       "type": "string"
+      },
+      "generate_audio": {
+       "type": "boolean",
+       "default": true
+      },
+      "camera_aperture": {
+       "enum": [
+        "f14-wide-open",
+        "f4-moderate",
+        "f11-deep-focus"
+       ],
+       "type": "string"
+      },
+      "camera_movement": {
+       "enum": [
+        "snorricam",
+        "robot-arm",
+        "tilt-up",
+        "rack-focus",
+        "tilt-down",
+        "pov",
+        "pan-left",
+        "crane-up",
+        "pan-right",
+        "crane-down",
+        "side-tracking",
+        "pedestal-up",
+        "pedestal-down",
+        "handheld",
+        "tracking",
+        "drone-orbit",
+        "dolly-zoom",
+        "aerial-pullback",
+        "static-shot",
+        "bullet-time",
+        "whip-pan",
+        "slow-zoom-in",
+        "arc-left",
+        "slow-zoom-out",
+        "arc-right",
+        "truck-right",
+        "dolly-in",
+        "truck-left",
+        "dolly-out",
+        "slider-right",
+        "crush-zoom",
+        "slider-left",
+        "helicopter-shot"
+       ],
+       "type": "string"
+      }
+     },
+     "additionalProperties": false
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/cinema-studio-4/generate"
+   }
+  ]
+ },
+ {
+  "slug": "ltx-2-5",
+  "vendor": "Lightricks",
+  "name": "LTX-2.5",
+  "workflows": [
+   {
+    "endpoint": "lightricks/ltx-2.5/image-to-video/fast",
+    "title": "LTX-2.5 \u2014 Image to video fast",
+    "notes": [
+     "duration is marked required in the schema and has default 6; the API applies this top-level default before validation. The example includes it explicitly.",
+     "Fast supports 720p, 1080p, 2k or 4k and 24, 25, 48 or 50 fps.",
+     "image_url is the required first frame; end_image_url is an optional last frame. aspect_ratio explicitly controls output dimensions."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "LTX-2.5 Fast Image to Video Playground",
+     "required": [
+      "prompt",
+      "duration",
+      "image_url"
+     ],
+     "properties": {
+      "fps": {
+       "enum": [
+        24,
+        25,
+        48,
+        50
+       ],
+       "type": "integer",
+       "title": "Frames per second",
+       "default": 25
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "maxLength": 5000,
+       "minLength": 2,
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "enum": [
+        6,
+        8,
+        10
+       ],
+       "type": "integer",
+       "title": "Duration",
+       "default": 6
+      },
+      "image_url": {
+       "type": "string",
+       "title": "First frame",
+       "format": "uri"
+      },
+      "resolution": {
+       "enum": [
+        "720p",
+        "1080p",
+        "2k",
+        "4k"
+       ],
+       "type": "string",
+       "title": "Resolution",
+       "default": "720p"
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "9:16"
+       ],
+       "type": "string",
+       "title": "Aspect ratio",
+       "default": "16:9"
+      },
+      "end_image_url": {
+       "type": "string",
+       "title": "Last frame",
+       "format": "uri"
+      },
+      "generate_audio": {
+       "type": "boolean",
+       "title": "Generate audio",
+       "default": true
+      },
+      "camera_movement": {
+       "enum": [
+        "dolly_in",
+        "dolly_out",
+        "dolly_left",
+        "dolly_right",
+        "jib_up",
+        "jib_down",
+        "static",
+        "focus_shift"
+       ],
+       "type": "string",
+       "title": "Camera movement"
+      }
+     },
+     "additionalProperties": false
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/ltx-2-5/image-to-video-fast"
+   },
+   {
+    "endpoint": "lightricks/ltx-2.5/image-to-video/pro",
+    "title": "LTX-2.5 \u2014 Image to video pro",
+    "notes": [
+     "duration is marked required in the schema and has default 6; the API applies this top-level default before validation. The example includes it explicitly.",
+     "Pro supports 720p or 1080p and 24, 25 or 50 fps. Use the Fast endpoint for 2k, 4k or 48 fps.",
+     "image_url is the required first frame; end_image_url is an optional last frame. aspect_ratio explicitly controls output dimensions."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "LTX-2.5 Pro Image to Video Playground",
+     "required": [
+      "prompt",
+      "duration",
+      "image_url"
+     ],
+     "properties": {
+      "fps": {
+       "enum": [
+        24,
+        25,
+        50
+       ],
+       "type": "integer",
+       "title": "Frames per second",
+       "default": 25
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "maxLength": 5000,
+       "minLength": 2,
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "enum": [
+        6,
+        8,
+        10
+       ],
+       "type": "integer",
+       "title": "Duration",
+       "default": 6
+      },
+      "image_url": {
+       "type": "string",
+       "title": "First frame",
+       "format": "uri"
+      },
+      "resolution": {
+       "enum": [
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "title": "Resolution",
+       "default": "720p"
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "9:16"
+       ],
+       "type": "string",
+       "title": "Aspect ratio",
+       "default": "16:9"
+      },
+      "end_image_url": {
+       "type": "string",
+       "title": "Last frame",
+       "format": "uri"
+      },
+      "generate_audio": {
+       "type": "boolean",
+       "title": "Generate audio",
+       "default": true
+      },
+      "camera_movement": {
+       "enum": [
+        "dolly_in",
+        "dolly_out",
+        "dolly_left",
+        "dolly_right",
+        "jib_up",
+        "jib_down",
+        "static",
+        "focus_shift"
+       ],
+       "type": "string",
+       "title": "Camera movement"
+      }
+     },
+     "additionalProperties": false
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/ltx-2-5/image-to-video-pro"
+   },
+   {
+    "endpoint": "lightricks/ltx-2.5/text-to-video/fast",
+    "title": "LTX-2.5 \u2014 Text to video fast",
+    "notes": [
+     "duration is marked required in the schema and has default 6; the API applies this top-level default before validation. The example includes it explicitly.",
+     "Fast supports 720p, 1080p, 2k or 4k and 24, 25, 48 or 50 fps."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "LTX-2.5 Fast Text to Video Playground",
+     "required": [
+      "prompt",
+      "duration"
+     ],
+     "properties": {
+      "fps": {
+       "enum": [
+        24,
+        25,
+        48,
+        50
+       ],
+       "type": "integer",
+       "title": "Frames per second",
+       "default": 25
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "maxLength": 5000,
+       "minLength": 2,
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "enum": [
+        6,
+        8,
+        10
+       ],
+       "type": "integer",
+       "title": "Duration",
+       "default": 6
+      },
+      "resolution": {
+       "enum": [
+        "720p",
+        "1080p",
+        "2k",
+        "4k"
+       ],
+       "type": "string",
+       "title": "Resolution",
+       "default": "720p"
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "9:16"
+       ],
+       "type": "string",
+       "title": "Aspect ratio",
+       "default": "16:9"
+      },
+      "generate_audio": {
+       "type": "boolean",
+       "title": "Generate audio",
+       "default": true
+      },
+      "camera_movement": {
+       "enum": [
+        "dolly_in",
+        "dolly_out",
+        "dolly_left",
+        "dolly_right",
+        "jib_up",
+        "jib_down",
+        "static",
+        "focus_shift"
+       ],
+       "type": "string",
+       "title": "Camera movement"
+      }
+     },
+     "additionalProperties": false
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/ltx-2-5/text-to-video-fast"
+   },
+   {
+    "endpoint": "lightricks/ltx-2.5/text-to-video/pro",
+    "title": "LTX-2.5 \u2014 Text to video pro",
+    "notes": [
+     "duration is marked required in the schema and has default 6; the API applies this top-level default before validation. The example includes it explicitly.",
+     "Pro supports 720p or 1080p and 24, 25 or 50 fps. Use the Fast endpoint for 2k, 4k or 48 fps."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "LTX-2.5 Pro Text to Video Playground",
+     "required": [
+      "prompt",
+      "duration"
+     ],
+     "properties": {
+      "fps": {
+       "enum": [
+        24,
+        25,
+        50
+       ],
+       "type": "integer",
+       "title": "Frames per second",
+       "default": 25
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "maxLength": 5000,
+       "minLength": 2,
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "enum": [
+        6,
+        8,
+        10
+       ],
+       "type": "integer",
+       "title": "Duration",
+       "default": 6
+      },
+      "resolution": {
+       "enum": [
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "title": "Resolution",
+       "default": "720p"
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "9:16"
+       ],
+       "type": "string",
+       "title": "Aspect ratio",
+       "default": "16:9"
+      },
+      "generate_audio": {
+       "type": "boolean",
+       "title": "Generate audio",
+       "default": true
+      },
+      "camera_movement": {
+       "enum": [
+        "dolly_in",
+        "dolly_out",
+        "dolly_left",
+        "dolly_right",
+        "jib_up",
+        "jib_down",
+        "static",
+        "focus_shift"
+       ],
+       "type": "string",
+       "title": "Camera movement"
+      }
+     },
+     "additionalProperties": false
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/ltx-2-5/text-to-video-pro"
+   }
+  ]
+ },
+ {
+  "slug": "minimax-h3",
+  "vendor": "MiniMax",
+  "name": "MiniMax H3",
+  "workflows": [
+   {
+    "endpoint": "minimax/h3/image-to-video",
+    "title": "MiniMax H3 \u2014 Image to video",
+    "notes": [
+     "Resolution is fixed to the case-sensitive schema value \"2K\". The prompt must contain non-whitespace text; the current provider serializer uses only its first 7,000 characters.",
+     "The output aspect ratio follows the input keyframe even when aspect_ratio is supplied. end_image_url is an optional last frame."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "MiniMax H3 Image to Video Playground",
+     "required": [
+      "prompt",
+      "image_url"
+     ],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "minLength": 1,
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 5
+      },
+      "image_url": {
+       "type": "string",
+       "title": "First frame URL",
+       "format": "uri"
+      },
+      "resolution": {
+       "enum": [
+        "2K"
+       ],
+       "type": "string",
+       "title": "Resolution",
+       "default": "2K"
+      },
+      "aspect_ratio": {
+       "enum": [
+        "auto",
+        "adaptive",
+        "21:9",
+        "16:9",
+        "4:3",
+        "1:1",
+        "3:4",
+        "9:16"
+       ],
+       "type": "string",
+       "title": "Aspect ratio",
+       "default": "auto"
+      },
+      "end_image_url": {
+       "type": "string",
+       "title": "Last frame URL",
+       "format": "uri"
+      },
+      "aigc_watermark": {
+       "type": "boolean",
+       "title": "AIGC watermark",
+       "default": false
+      }
+     },
+     "additionalProperties": false
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/minimax-h3/image-to-video"
+   },
+   {
+    "endpoint": "minimax/h3/reference-to-video",
+    "title": "MiniMax H3 \u2014 Reference to video",
+    "notes": [
+     "Resolution is fixed to the case-sensitive schema value \"2K\". The prompt must contain non-whitespace text; the current provider serializer uses only its first 7,000 characters.",
+     "Provide at least one image or video reference. Audio references require an image or video reference and cannot be used alone.",
+     "Reference media may be cropped, resized, transcoded and trimmed. Video duration and audio duration are each normalized to fit within the provider's 15-second total budget."
+    ],
+    "schema": {
+     "if": {
+      "required": [
+       "image_urls"
+      ]
+     },
+     "else": {
+      "required": [
+       "video_urls"
+      ]
+     },
+     "type": "object",
+     "title": "MiniMax H3 Reference to Video Playground",
+     "required": [
+      "prompt"
+     ],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "minLength": 1,
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 5
+      },
+      "audio_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri"
+       },
+       "title": "Reference audio URLs",
+       "maxItems": 3,
+       "minItems": 0
+      },
+      "image_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri"
+       },
+       "title": "Reference image URLs",
+       "maxItems": 9,
+       "minItems": 1
+      },
+      "resolution": {
+       "enum": [
+        "2K"
+       ],
+       "type": "string",
+       "title": "Resolution",
+       "default": "2K"
+      },
+      "video_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "format": "uri"
+       },
+       "title": "Reference video URLs",
+       "maxItems": 3,
+       "minItems": 1
+      },
+      "aspect_ratio": {
+       "enum": [
+        "auto",
+        "adaptive",
+        "21:9",
+        "16:9",
+        "4:3",
+        "1:1",
+        "3:4",
+        "9:16"
+       ],
+       "type": "string",
+       "title": "Aspect ratio",
+       "default": "auto"
+      },
+      "aigc_watermark": {
+       "type": "boolean",
+       "title": "AIGC watermark",
+       "default": false
+      }
+     },
+     "additionalProperties": false
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/minimax-h3/reference-to-video"
+   },
+   {
+    "endpoint": "minimax/h3/text-to-video",
+    "title": "MiniMax H3 \u2014 Text to video",
+    "notes": [
+     "Resolution is fixed to the case-sensitive schema value \"2K\". The prompt must contain non-whitespace text; the current provider serializer uses only its first 7,000 characters.",
+     "For text-only requests, aspect_ratio=\"auto\" or \"adaptive\" resolves to 16:9."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "MiniMax H3 Text to Video Playground",
+     "required": [
+      "prompt"
+     ],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "minLength": 1,
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 5
+      },
+      "resolution": {
+       "enum": [
+        "2K"
+       ],
+       "type": "string",
+       "title": "Resolution",
+       "default": "2K"
+      },
+      "aspect_ratio": {
+       "enum": [
+        "auto",
+        "adaptive",
+        "21:9",
+        "16:9",
+        "4:3",
+        "1:1",
+        "3:4",
+        "9:16"
+       ],
+       "type": "string",
+       "title": "Aspect ratio",
+       "default": "auto"
+      },
+      "aigc_watermark": {
+       "type": "boolean",
+       "title": "AIGC watermark",
+       "default": false
+      }
+     },
+     "additionalProperties": false
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/minimax-h3/text-to-video"
+   }
+  ]
+ },
+ {
+  "slug": "hailuo-2-3",
+  "vendor": "MiniMax",
+  "name": "Hailuo 2.3",
+  "workflows": [
+   {
+    "endpoint": "minimax/hailuo-2.3/standard/image-to-video",
+    "title": "Hailuo 2.3 \u2014 Standard image to video",
+    "notes": [
+     "This Standard endpoint uses a fixed 768P output resolution; resolution is not a configurable field in the production schema."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Minimax Hailuo 2.3 Playground",
+     "required": [
+      "prompt",
+      "image_url"
+     ],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "enum": [
+        6,
+        10
+       ],
+       "type": "integer",
+       "title": "Duration",
+       "default": 6
+      },
+      "image_url": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      },
+      "prompt_optimizer": {
+       "type": "boolean",
+       "title": "Prompt optimizer",
+       "default": true
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/hailuo-2-3/standard-image-to-video"
+   },
+   {
+    "endpoint": "minimax/hailuo-2.3/standard/text-to-video",
+    "title": "Hailuo 2.3 \u2014 Standard text to video",
+    "notes": [
+     "This Standard endpoint uses a fixed 768P output resolution; resolution is not a configurable field in the production schema."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Minimax Hailuo 2.3 Playground",
+     "required": [
+      "prompt"
+     ],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "enum": [
+        6,
+        10
+       ],
+       "type": "integer",
+       "title": "Duration",
+       "default": 6
+      },
+      "prompt_optimizer": {
+       "type": "boolean",
+       "title": "Prompt optimizer",
+       "default": true
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/hailuo-2-3/standard-text-to-video"
+   }
+  ]
+ },
+ {
+  "slug": "pixverse-v6",
+  "vendor": "PixVerse",
+  "name": "PixVerse V6",
+  "workflows": [
+   {
+    "endpoint": "pixverse/v6/image-to-video",
+    "title": "PixVerse V6 \u2014 Image to video",
+    "notes": [
+     "duration is a number from 1 to 15, so the schema allows fractional values. If negative_prompt is supplied, it must contain 1\u20132,048 characters.",
+     "Use image_url for the first frame and optional end_image_url for the last frame. This endpoint has no aspect_ratio parameter; framing comes from the input image."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "PixVerse V6 Image to Video Playground",
+     "required": [
+      "prompt",
+      "image_url"
+     ],
+     "properties": {
+      "seed": {
+       "type": "integer",
+       "title": "Seed",
+       "maximum": 2147483647,
+       "minimum": 0
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "maxLength": 5000,
+       "minLength": 1,
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "number",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 1
+      },
+      "image_url": {
+       "type": "string",
+       "title": "First frame",
+       "format": "uri"
+      },
+      "resolution": {
+       "enum": [
+        "360p",
+        "540p",
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "title": "Resolution",
+       "default": "720p"
+      },
+      "end_image_url": {
+       "type": "string",
+       "title": "Last frame",
+       "format": "uri"
+      },
+      "generate_audio": {
+       "type": "boolean",
+       "title": "Generate audio",
+       "default": true
+      },
+      "negative_prompt": {
+       "type": "string",
+       "title": "Negative prompt",
+       "maxLength": 2048,
+       "minLength": 1
+      }
+     },
+     "additionalProperties": false
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/pixverse-v6/image-to-video"
+   },
+   {
+    "endpoint": "pixverse/v6/text-to-video",
+    "title": "PixVerse V6 \u2014 Text to video",
+    "notes": [
+     "duration is a number from 1 to 15, so the schema allows fractional values. If negative_prompt is supplied, it must contain 1\u20132,048 characters."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "PixVerse V6 Text to Video Playground",
+     "required": [
+      "prompt"
+     ],
+     "properties": {
+      "seed": {
+       "type": "integer",
+       "title": "Seed",
+       "maximum": 2147483647,
+       "minimum": 0
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "maxLength": 5000,
+       "minLength": 1,
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "number",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 1
+      },
+      "resolution": {
+       "enum": [
+        "360p",
+        "540p",
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "title": "Resolution",
+       "default": "720p"
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "4:3",
+        "1:1",
+        "3:4",
+        "9:16"
+       ],
+       "type": "string",
+       "title": "Aspect ratio",
+       "default": "16:9"
+      },
+      "generate_audio": {
+       "type": "boolean",
+       "title": "Generate audio",
+       "default": true
+      },
+      "negative_prompt": {
+       "type": "string",
+       "title": "Negative prompt",
+       "maxLength": 2048,
+       "minLength": 1
+      }
+     },
+     "additionalProperties": false
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/pixverse-v6/text-to-video"
+   }
+  ]
+ },
+ {
+  "slug": "wan-2-6",
+  "vendor": "Alibaba",
+  "name": "Wan 2.6",
+  "workflows": [
+   {
+    "endpoint": "wan/v2.6/image-to-video",
+    "title": "Wan 2.6 \u2014 Image to video",
+    "notes": [
+     "Setting multi_shots=true also enables prompt_extend, even if prompt_extend was false.",
+     "Input images may be resized to fit a 1,440-pixel maximum dimension before generation. A last-frame input is unsupported."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Wan 2.6 Playground",
+     "required": [
+      "prompt",
+      "image_url"
+     ],
+     "properties": {
+      "seed": {
+       "type": "integer",
+       "maximum": 10000000,
+       "minimum": -1
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "enum": [
+        5,
+        10,
+        15
+       ],
+       "type": "integer",
+       "title": "Duration",
+       "default": 5
+      },
+      "audio_url": {
+       "type": "string",
+       "title": "Audio URL",
+       "format": "uri"
+      },
+      "image_url": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      },
+      "resolution": {
+       "enum": [
+        "480p",
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "default": "720p"
+      },
+      "multi_shots": {
+       "type": "boolean",
+       "default": false
+      },
+      "prompt_extend": {
+       "type": "boolean",
+       "default": false
+      },
+      "negative_prompt": {
+       "type": "string",
+       "title": "Negative prompt",
+       "default": ""
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/wan-2-6/image-to-video"
+   },
+   {
+    "endpoint": "wan/v2.6/reference-to-video",
+    "title": "Wan 2.6 \u2014 Reference to video",
+    "notes": [
+     "Supply 1\u20133 reference videos. This endpoint supports only 5 or 10 seconds, unlike the text and image endpoints that also support 15 seconds."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Wan 2.6 Playground",
+     "required": [
+      "prompt",
+      "video_urls"
+     ],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "enum": [
+        5,
+        10
+       ],
+       "type": "integer",
+       "title": "Duration",
+       "default": 5
+      },
+      "resolution": {
+       "enum": [
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "title": "Resolution",
+       "default": "720p"
+      },
+      "video_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "title": "Video URL",
+        "format": "uri"
+       },
+       "maxItems": 3,
+       "minItems": 1
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "9:16",
+        "1:1",
+        "4:3",
+        "3:4"
+       ],
+       "type": "string",
+       "default": "16:9"
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/wan-2-6/reference-to-video"
+   },
+   {
+    "endpoint": "wan/v2.6/text-to-video",
+    "title": "Wan 2.6 \u2014 Text to video",
+    "notes": [
+     "Setting multi_shots=true also enables prompt_extend, even if prompt_extend was false."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Wan 2.6 Playground",
+     "required": [
+      "prompt"
+     ],
+     "properties": {
+      "seed": {
+       "type": "integer",
+       "maximum": 10000000,
+       "minimum": -1
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "enum": [
+        5,
+        10,
+        15
+       ],
+       "type": "integer",
+       "title": "Duration",
+       "default": 5
+      },
+      "audio_url": {
+       "type": "string",
+       "title": "Audio URL",
+       "format": "uri"
+      },
+      "resolution": {
+       "enum": [
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "default": "720p"
+      },
+      "multi_shots": {
+       "type": "boolean",
+       "default": false
+      },
+      "prompt_extend": {
+       "type": "boolean",
+       "default": false
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/wan-2-6/text-to-video"
+   }
+  ]
+ },
+ {
+  "slug": "wan-2-7",
+  "vendor": "Alibaba",
+  "name": "Wan 2.7",
+  "workflows": [
+   {
+    "endpoint": "wan/v2.7/image-to-video",
+    "title": "Wan 2.7 \u2014 Image to video",
+    "notes": [
+     "The prompt is optional. end_image_url supplies a last frame, and audio_url can supply driving audio."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Wan 2.6 Playground",
+     "required": [
+      "image_url"
+     ],
+     "properties": {
+      "seed": {
+       "type": "integer",
+       "maximum": 2147483646,
+       "minimum": 1
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 2
+      },
+      "audio_url": {
+       "type": "string",
+       "title": "Audio URL",
+       "format": "uri"
+      },
+      "image_url": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      },
+      "resolution": {
+       "enum": [
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "default": "720p"
+      },
+      "end_image_url": {
+       "type": "string",
+       "title": "Image URL",
+       "format": "uri"
+      },
+      "prompt_extend": {
+       "type": "boolean",
+       "default": false
+      },
+      "negative_prompt": {
+       "type": "string",
+       "title": "Negative prompt",
+       "default": ""
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/wan-2-7/image-to-video"
+   },
+   {
+    "endpoint": "wan/v2.7/reference-to-video",
+    "title": "Wan 2.7 \u2014 Reference to video",
+    "notes": [
+     "Provide a nonempty image_urls or video_urls array. The combined number of image and video references must not exceed 5; this submission limit is not expressed in the stored JSON Schema.",
+     "Reference generation is limited to 2\u201310 seconds and aspect ratios 16:9 or 9:16."
+    ],
+    "schema": {
+     "if": {
+      "required": [
+       "image_urls"
+      ],
+      "properties": {
+       "image_urls": {
+        "type": "array",
+        "minItems": 1
+       }
+      }
+     },
+     "else": {
+      "required": [
+       "video_urls"
+      ],
+      "properties": {
+       "video_urls": {
+        "type": "array",
+        "minItems": 1
+       }
+      }
+     },
+     "type": "object",
+     "title": "Wan 2.7 References",
+     "required": [
+      "prompt"
+     ],
+     "properties": {
+      "seed": {
+       "type": "integer",
+       "maximum": 2147483646,
+       "minimum": 1
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 10,
+       "minimum": 2
+      },
+      "image_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "title": "Image",
+        "format": "uri"
+       }
+      },
+      "resolution": {
+       "enum": [
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "default": "720p"
+      },
+      "video_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "title": "Video",
+        "format": "uri"
+       }
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "9:16"
+       ],
+       "type": "string",
+       "title": "Aspect Ratio",
+       "default": "16:9"
+      },
+      "prompt_extend": {
+       "type": "boolean",
+       "default": false
+      },
+      "negative_prompt": {
+       "type": "string",
+       "title": "Negative prompt",
+       "default": ""
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/wan-2-7/reference-to-video"
+   },
+   {
+    "endpoint": "wan/v2.7/text-to-video",
+    "title": "Wan 2.7 \u2014 Text to video",
+    "notes": [
+     "The prompt must contain text. audio_url can supply driving audio."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Wan 2.6 Playground",
+     "required": [
+      "prompt"
+     ],
+     "properties": {
+      "seed": {
+       "type": "integer",
+       "maximum": 2147483646,
+       "minimum": 1
+      },
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 2
+      },
+      "audio_url": {
+       "type": "string",
+       "title": "Audio URL",
+       "format": "uri"
+      },
+      "resolution": {
+       "enum": [
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "default": "720p"
+      },
+      "aspect_ratio": {
+       "enum": [
+        "16:9",
+        "9:16",
+        "1:1",
+        "4:3",
+        "3:4"
+       ],
+       "type": "string",
+       "title": "Aspect Ratio",
+       "default": "16:9"
+      },
+      "prompt_extend": {
+       "type": "boolean",
+       "default": false
+      },
+      "negative_prompt": {
+       "type": "string",
+       "title": "Negative prompt",
+       "default": ""
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/wan-2-7/text-to-video"
+   }
+  ]
+ },
+ {
+  "slug": "grok-video-1-5",
+  "vendor": "xAI",
+  "name": "Grok Imagine Video 1.5",
+  "workflows": [
+   {
+    "endpoint": "xai/grok-imagine-video/v1.5/reference-to-video",
+    "title": "Grok Imagine Video 1.5 \u2014 Reference to video",
+    "notes": [
+     "This endpoint also accepts text-only requests or one first-frame image. Choose either image_url or reference media (image_urls/audio_url); do not combine these modes.",
+     "When image_urls or audio_url is provided, resolution must be 480p or 720p. The shared schema also lists 1080p, which is rejected in reference mode.",
+     "Input images must decode as JPEG, PNG, WebP or GIF; SVG and XML are unsupported."
+    ],
+    "schema": {
+     "type": "object",
+     "title": "Grok Imagine Video 1.5 Reference Playground",
+     "required": [
+      "prompt"
+     ],
+     "properties": {
+      "prompt": {
+       "type": "string",
+       "title": "Prompt",
+       "description": "Write your prompt here"
+      },
+      "duration": {
+       "type": "integer",
+       "title": "Duration",
+       "default": 5,
+       "maximum": 15,
+       "minimum": 1
+      },
+      "audio_url": {
+       "type": "string",
+       "title": "Reference audio",
+       "format": "uri"
+      },
+      "image_url": {
+       "type": "string",
+       "title": "First-frame image",
+       "format": "uri"
+      },
+      "image_urls": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "title": "Image",
+        "format": "uri"
+       },
+       "title": "Reference images",
+       "maxItems": 7,
+       "minItems": 0
+      },
+      "resolution": {
+       "enum": [
+        "480p",
+        "720p",
+        "1080p"
+       ],
+       "type": "string",
+       "title": "Resolution",
+       "default": "480p"
+      },
+      "aspect_ratio": {
+       "enum": [
+        "auto",
+        "1:1",
+        "16:9",
+        "9:16",
+        "4:3",
+        "3:4",
+        "3:2",
+        "2:3"
+       ],
+       "type": "string",
+       "default": "auto"
+      }
+     }
+    },
+    "doc": "https://docs.higgsfield.ai/docs/models/grok-video-1-5/reference-to-video"
+   }
+  ]
+ }
+]

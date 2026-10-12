@@ -17,6 +17,26 @@ pointed at a test folder.
 | LAN access | Bound to `127.0.0.1` and `192.168.10.7` only. firewalld `public` zone on `enp8s0` still blocks port 8000, so other LAN machines can't reach it yet |
 | Nuke node | Written and syntax-checked only; never run inside Nuke |
 
+## Update: Higgsfield generation (built after the first handover)
+
+The Generate, History and Funds tabs are built and tested end to end against a local mock of the Higgsfield API. They have **not** been run against the real API, because there's no key yet. See the README section "Generate with Higgsfield".
+
+| Asked | Built | Notes |
+| --- | --- | --- |
+| Submit processed depth videos to Higgsfield from Gradio | Yes | Depth/plate mp4 made from DA3 jobs; all 67 video workflows, forms built from their schemas |
+| Follow tasks | Yes | Background worker: uploads, submits within the concurrency limit, polls with backoff, downloads outputs |
+| Funds | Partly | No balance endpoint exists, so the tab shows per-job estimates and spend totals plus a link to the console |
+| Prompts and job history with all metadata | Yes | SQLite history survives restarts; full record per job |
+| Resubmit a 480p job at higher res with same seed and prompt | Yes | Seed only on Wan and Happy Horse models; others are marked as new random results |
+| Batch jobs for cheaper rates | Yes, as drafts | No documented batch discount; draft at the lowest tier, then "Upscale picks" |
+| Password | Yes | Shared `UI_PASSWORD`; REST API stays open for Nuke |
+
+Open items for this part:
+- [ ] Add `HIGGSFIELD_KEY_ID` / `HIGGSFIELD_KEY_SECRET` and `UI_PASSWORD` to `.env`, then run one cheap real job to confirm upload, estimate, submit, poll and download against the live API.
+- [ ] Check the form in a real browser. It was tested only through `gradio_client`.
+- [ ] Media made from DA3 jobs (`./data/generate/media`) and outputs are never cleaned up.
+- [ ] DA3 jobs are in memory, so after a restart old DA3 results can't be added to the media list; history rows keep working because they store file paths.
+
 ## Requirements audit
 
 All but four asks are built and tested. The gaps:
