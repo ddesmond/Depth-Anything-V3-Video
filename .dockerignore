@@ -1,0 +1,7 @@
+.git
+.claude
+data
+tmp
+.env
+nuke
+**/__pycache__

@@ -20,18 +20,102 @@ Unlike the official repository demos—which often require extracting frames or 
 
 ---
 
-## Prerequisites & Installation
+## Docker service (API + queue + Nuke node)
+
+A GPU container that runs DA3 behind a small HTTP API with a FIFO job queue (one
+job at a time, model kept loaded). Inputs are videos, single images or image
+sequences (`shot.####.exr`, `shot.%04d.png`). Outputs are **half-float EXR depth
+(`depth.Z`, PIZ or ZIP16)** plus an optional side-by-side preview mp4.
+
+### Requirements
+
+- NVIDIA driver + [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/)
+- Docker Compose v2
+
+The image uses PyTorch `cu126` wheels by default. These are the newest builds that
+still support Pascal cards (GTX 10xx) and they also run on newer GPUs. On
+Turing or newer you can set `TORCH_CUDA=cu128` in `.env`.
+
+### Setup
+
+```bash
+cp .env.example .env        # set PROJECTS_DIR, UID/GID
+mkdir -p ~/.cache/huggingface "$PROJECTS_DIR"
+docker compose up -d --build
+curl localhost:8000/health
+```
+
+- `PROJECTS_DIR` is mounted at the **same path** inside the container, so paths
+  from Nuke work unchanged. Jobs can only read and write under it and `./data`.
+- All three models (small/base/large) are baked into the image. The host HF cache
+  (`~/.cache/huggingface`) is checked first. Anything missing from both is
+  downloaded into the host cache.
+- The port is published on all interfaces (localhost + LAN) with **no auth**.
+- The queue is in memory, so queued and running jobs are lost if the container restarts.
+
+### API
+
+| Method | Path | |
+|---|---|---|
+| `POST` | `/jobs` | JSON job for a path on the mounted storage |
+| `POST` | `/jobs/upload` | multipart: `file` (video, image, or `.zip` of a sequence) + same options as form fields |
+| `GET` | `/jobs` / `/jobs/{id}` | status, `done`/`total` frames, `queue_position`, `result` |
+| `DELETE` | `/jobs/{id}` | cancel (queued or running) |
+| `GET` | `/jobs/{id}/result` | zip of the EXRs + preview |
+| `GET` | `/jobs/{id}/preview` | preview mp4 |
+| `GET` | `/health`, `/models` | GPU / queue / model info |
+
+Interactive docs: `http://localhost:8000/docs`.
+
+```bash
+# path job (default output: <input dir>/da3_depth/)
+curl -X POST localhost:8000/jobs -H 'Content-Type: application/json' -d '{
+  "input": "/home/me/projects/shot010/plate/shot010.####.exr",
+  "first": 1001, "last": 1100,
+  "encoder": "da3-base", "compression": "piz"
+}'
+
+# upload job
+curl -F file=@clip.mp4 -F encoder=da3-small localhost:8000/jobs/upload
+curl -OJ localhost:8000/jobs/<id>/result
+```
+
+Options: `encoder` (`da3-small|da3-base|da3-large`), `first`/`last` (real frame
+numbers for sequences; 1-based for videos), `process_res` (default 504),
+`batch_size` (frames per inference call; >1 gives a more consistent depth scale
+across frames but uses more VRAM), `compression` (`piz|zip16|zip|none`),
+`preview`, `fps`, `output_dir`.
+
+EXR inputs are treated as scene-linear and converted to sRGB before inference.
+Depth values are DA3's raw (relative) depth, not normalized.
+
+### Nuke
+
+```bash
+cp nuke/da3_depth.py nuke/menu.py ~/.nuke/     # or add nuke/ to NUKE_PATH
+```
+
+**Nodes → DA3 → DA3 Depth** creates a node. Connect it below a Read, pick a model,
+and press **Submit**. The node shows queue and progress status. When the job
+finishes, it creates a Read on the EXR depth sequence (`raw` colorspace,
+`depth.Z` channel).
+
+---
+
+## Standalone script
+
+### Prerequisites & Installation
 
 Depth Anything V3 works best with **Python 3.10**. Newer versions (e.g. 3.13) commonly cause dependency conflicts.
 
-### 1. Create a Clean Environment (Recommended)
+#### 1. Create a Clean Environment (Recommended)
 
 ```bash
 conda create -n da3 python=3.10 -y
 conda activate da3
 ````
 
-### 2. Install PyTorch
+#### 2. Install PyTorch
 
 Install the PyTorch build matching your CUDA version (example for CUDA 12.1):
 
@@ -39,7 +123,7 @@ Install the PyTorch build matching your CUDA version (example for CUDA 12.1):
 pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
 ```
 
-### 3. Install the Official Depth Anything V3 Library
+#### 3. Install the Official Depth Anything V3 Library
 
 This script wraps the official ByteDance implementation.
 
@@ -49,7 +133,7 @@ cd Depth-Anything-3
 pip install -e .
 ```
 
-### 4. Install Additional Dependencies
+#### 4. Install Additional Dependencies
 
 ```bash
 pip install opencv-python matplotlib tqdm
@@ -57,31 +141,31 @@ pip install opencv-python matplotlib tqdm
 
 ---
 
-## Usage
+### Usage
 
-Place `run_da3_video.py` inside the `Depth-Anything-3` directory (or ensure the package is on your `PYTHONPATH`).
+Place `da3_video.py` inside the `Depth-Anything-3` directory (or ensure the package is on your `PYTHONPATH`).
 
-### Basic Usage
+#### Basic Usage
 
 ```bash
-python run_da3_video.py --video-path input_video.mp4
+python da3_video.py --video-path input_video.mp4
 ```
 
-### Use a Larger, More Accurate Model
+#### Use a Larger, More Accurate Model
 
 ```bash
-python run_da3_video.py --video-path input_video.mp4 --encoder da3-large
+python da3_video.py --video-path input_video.mp4 --encoder da3-large
 ```
 
-### Save Only the Depth Map (No Side-by-Side)
+#### Save Only the Depth Map (No Side-by-Side)
 
 ```bash
-python run_da3_video.py --video-path input_video.mp4 --pred-only --grayscale
+python da3_video.py --video-path input_video.mp4 --pred-only --grayscale
 ```
 
 ---
 
-## Arguments
+### Arguments
 
 | Argument       | Description                                                                  | Default           |
 | -------------- | ---------------------------------------------------------------------------- | ----------------- |
@@ -93,22 +177,22 @@ python run_da3_video.py --video-path input_video.mp4 --pred-only --grayscale
 
 ---
 
-## Troubleshooting
+### Troubleshooting
 
-### Warning: `Dependency gsplat is required...`
+#### Warning: `Dependency gsplat is required...`
 
 This warning can be safely ignored. `gsplat` is only needed for 3D Gaussian Splatting, not for video depth inference.
 
-### Error: Package `depth-anything-3` requires a different Python version
+#### Error: Package `depth-anything-3` requires a different Python version
 
 You are likely using Python 3.13 or newer. Switch to a Python 3.10 environment as shown above.
 
-### CUDA Out of Memory
+#### CUDA Out of Memory
 
 If you hit VRAM limits, use a smaller model:
 
 ```bash
-python run_da3_video.py --video-path video.mp4 --encoder da3-small
+python da3_video.py --video-path video.mp4 --encoder da3-small
 ```
 
 ---

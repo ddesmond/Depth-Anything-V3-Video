@@ -1,0 +1,4 @@
+tmp/
+.env
+data/
+__pycache__/

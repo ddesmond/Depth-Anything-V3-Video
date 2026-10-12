@@ -2,6 +2,7 @@ import argparse
 import cv2
 import numpy as np
 import os
+import sys
 import torch
 import matplotlib
 import logging
@@ -34,11 +35,11 @@ if __name__ == '__main__':
         model = DepthAnything3.from_pretrained(f"depth-anything/{args.encoder}").to(DEVICE).eval()
     except Exception as e:
         print(f"Error loading model: {e}")
-        exit()
+        sys.exit(1)
 
     if not os.path.isfile(args.video_path):
         print(f"Video file not found: {args.video_path}")
-        exit()
+        sys.exit(1)
 
     os.makedirs(args.outdir, exist_ok=True)
     filename = args.video_path
@@ -57,6 +58,7 @@ if __name__ == '__main__':
     
     out = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*"mp4v"), frame_rate, (output_width, frame_height))
     
+    failed = False
     with tqdm(total=total_frames, unit="frame") as pbar:
         while raw_video.isOpened():
             ret, raw_frame = raw_video.read()
@@ -114,6 +116,7 @@ if __name__ == '__main__':
             except Exception as e:
                 # Use repr() to get more info if e is weird
                 print(f"Frame Error: {repr(e)}")
+                failed = True
                 # If we fail, break so we don't spam errors
                 break
             
@@ -121,4 +124,7 @@ if __name__ == '__main__':
     
     raw_video.release()
     out.release()
+    if failed:
+        print(f"Stopped early; partial output saved to: {output_path}")
+        sys.exit(1)
     print(f"Done! Saved to: {output_path}")

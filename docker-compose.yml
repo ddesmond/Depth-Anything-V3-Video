@@ -1,0 +1,30 @@
+services:
+  da3:
+    build:
+      context: .
+      args:
+        TORCH_CUDA: ${TORCH_CUDA:-cu126}
+        BAKE_MODELS: ${BAKE_MODELS:-da3-small da3-base da3-large}
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+    image: da3-video:latest
+    restart: unless-stopped
+    ports:
+      - "${DA3_PORT:-8000}:8000"   # all interfaces: localhost + LAN, no auth
+    environment:
+      ALLOWED_ROOTS: ${PROJECTS_DIR:?set PROJECTS_DIR in .env}
+      HF_HOST_CACHE: /hf-host/hub
+      DA3_LOG_LEVEL: WARN
+    volumes:
+      # mounted at the same path as on the host so Nuke paths work as-is
+      - ${PROJECTS_DIR}:${PROJECTS_DIR}
+      - ./data:/data
+      - ${HF_CACHE_DIR:-~/.cache/huggingface}:/hf-host
+    shm_size: 2gb
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
