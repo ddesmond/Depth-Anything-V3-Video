@@ -5,6 +5,7 @@ import os
 import re
 
 import cv2
+import imageio_ffmpeg
 import matplotlib
 import numpy as np
 import OpenEXR
@@ -197,7 +198,8 @@ def write_exr_depth(path, depth, compression="piz"):
 
 
 class Preview:
-    """Side-by-side RGB | colourised depth mp4, capped at 720p height."""
+    """Side-by-side RGB | colourised depth, H.264 mp4 (plays in browsers and Nuke),
+    capped at 720p height."""
 
     def __init__(self, path, fps):
         self.path = path
@@ -212,16 +214,19 @@ class Preview:
         lo, hi = np.percentile(depth, (1, 99))
         norm = np.clip((depth - lo) / max(hi - lo, 1e-6), 0, 1)
         vis = (self.cmap(norm)[..., :3] * 255).astype(np.uint8)
-        frame = np.hstack([cv2.resize(rgb, size), cv2.resize(vis, size)])
+        frame = np.ascontiguousarray(np.hstack([cv2.resize(rgb, size), cv2.resize(vis, size)]))
         if self.writer is None:
-            self.writer = cv2.VideoWriter(
-                self.path, cv2.VideoWriter_fourcc(*"mp4v"), self.fps, (frame.shape[1], frame.shape[0])
+            self.writer = imageio_ffmpeg.write_frames(
+                self.path, (frame.shape[1], frame.shape[0]), fps=self.fps, codec="libx264",
+                pix_fmt_out="yuv420p", quality=7, macro_block_size=2,
+                output_params=["-movflags", "+faststart"],
             )
-        self.writer.write(cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
+            self.writer.send(None)
+        self.writer.send(frame)
 
     def close(self):
         if self.writer is not None:
-            self.writer.release()
+            self.writer.close()
 
 
 # ---------------------------------------------------------------- job

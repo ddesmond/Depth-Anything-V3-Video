@@ -30,3 +30,6 @@ OpenEXR>=3.3
 fastapi
 uvicorn[standard]
 python-multipart
+
+# web UI
+gradio>=5

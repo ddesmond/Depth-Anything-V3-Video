@@ -10,11 +10,14 @@ services:
     image: da3-video:latest
     restart: unless-stopped
     ports:
-      - "${DA3_PORT:-8000}:8000"   # all interfaces: localhost + LAN, no auth
+      # localhost + one LAN address only (not VPN / Netbird), no auth
+      - "127.0.0.1:${DA3_PORT:-8000}:8000"
+      - "${DA3_LAN_IP:?set DA3_LAN_IP in .env}:${DA3_PORT:-8000}:8000"
     environment:
       ALLOWED_ROOTS: ${PROJECTS_DIR:?set PROJECTS_DIR in .env}
       HF_HOST_CACHE: /hf-host/hub
       DA3_LOG_LEVEL: WARN
+      GRADIO_TEMP_DIR: /data/gradio-cache
     volumes:
       # mounted at the same path as on the host so Nuke paths work as-is
       - ${PROJECTS_DIR}:${PROJECTS_DIR}

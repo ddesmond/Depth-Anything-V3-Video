@@ -25,7 +25,7 @@ Unlike the official repository demos—which often require extracting frames or 
 A GPU container that runs DA3 behind a small HTTP API with a FIFO job queue (one
 job at a time, model kept loaded). Inputs are videos, single images or image
 sequences (`shot.####.exr`, `shot.%04d.png`). Outputs are **half-float EXR depth
-(`depth.Z`, PIZ or ZIP16)** plus an optional side-by-side preview mp4.
+(`depth.Z`, PIZ or ZIP16)** plus an optional side-by-side H.264 preview mp4. You can use it from a web UI, a REST API or a Nuke node.
 
 ### Requirements
 
@@ -50,8 +50,21 @@ curl localhost:8000/health
 - All three models (small/base/large) are baked into the image. The host HF cache
   (`~/.cache/huggingface`) is checked first. Anything missing from both is
   downloaded into the host cache.
-- The port is published on all interfaces (localhost + LAN) with **no auth**.
+- The port is published only on localhost and `DA3_LAN_IP` (set in `.env`) with **no auth**.
+  If firewalld is active, open it with
+  `sudo firewall-cmd --zone=public --add-port=8000/tcp --permanent && sudo firewall-cmd --reload`.
 - The queue is in memory, so queued and running jobs are lost if the container restarts.
+
+### Web UI
+
+Open **http://localhost:8000/ui** (or `http://<machine-ip>:8000/ui` from the LAN;
+`/` redirects there). It has these features:
+- Upload a video, image or `.zip` sequence, or enter a path on the mounted storage.
+- Pick the model and options.
+- Watch the live job list and progress, play the preview, download the result zip, or cancel a job.
+
+UI jobs share the API's queue. Gradio's file cache lives in `./data/gradio-cache`
+and is cleaned after a day.
 
 ### API
 
