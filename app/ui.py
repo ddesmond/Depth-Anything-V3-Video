@@ -81,17 +81,6 @@ def build_ui():
             raise gr.Error(str(e))
         return job.id
 
-    def submit_path(path, output_dir, *opts):
-        if not path:
-            raise gr.Error("Enter an input path.")
-        try:
-            req = svc.PathJob(input=path.strip(), output_dir=output_dir.strip() or None,
-                              **options(*opts).model_dump())
-            job = svc.submit_path_job(req)
-        except ValueError as e:
-            raise gr.Error(str(e))
-        return job.id
-
     def table():
         rows = []
         for j in svc.jobs.list():
@@ -147,16 +136,11 @@ def build_ui():
                             "One job runs at a time; the rest wait in the queue.")
                 with gr.Row():
                     with gr.Column(scale=1):
-                        with gr.Tab("Upload"):
-                            file = gr.File(label="Video, image, or .zip of an image sequence",
-                                           type="filepath")
-                            upload_btn = gr.Button("Submit upload", variant="primary")
-                        with gr.Tab("Path on server"):
-                            path = gr.Textbox(label="Input",
-                                              placeholder="/projects/shot010/plate/shot010.####.exr")
-                            output_dir = gr.Textbox(label="Output dir",
-                                                    placeholder="default: <input dir>/da3_depth")
-                            path_btn = gr.Button("Submit path", variant="primary")
+                        # Upload only: the web UI never reads paths on the server's disks
+                        # (path jobs stay available on the REST API for the Nuke node).
+                        file = gr.File(label="Upload a video, image, or .zip of an image sequence",
+                                       type="filepath")
+                        upload_btn = gr.Button("Submit upload", variant="primary")
                         with gr.Accordion("Options", open=True):
                             encoder = gr.Dropdown(list(REPOS), value="da3-base", label="Model")
                             process_res = gr.Slider(252, 2016, value=504, step=14,
@@ -182,7 +166,6 @@ def build_ui():
 
         opts = [encoder, process_res, batch_size, compression, preview, first, last]
         upload_btn.click(submit_upload, [file, *opts], job_id)
-        path_btn.click(submit_path, [path, output_dir, *opts], job_id)
         cancel_btn.click(cancel, job_id)
         jobs_table.select(pick, None, job_id)
 

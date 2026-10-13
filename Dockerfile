@@ -1,9 +1,10 @@
 FROM python:3.10-slim-bookworm
 
-# cu126 is the newest PyTorch CUDA build that still ships Pascal (sm_61) kernels,
-# so it runs on a GTX 10xx as well as newer cards. Use cu128/cu130 for Turing+ only.
-ARG TORCH_CUDA=cu126
-ARG TORCH_VERSION=
+# CUDA 12.4 build of torch, so it runs on NVIDIA drivers that support CUDA 12.4 or newer
+# (driver 550+, e.g. hyper01). torch 2.6.0 is the newest release PyTorch publishes for cu124;
+# it has kernels for Pascal (GTX 10xx) through Hopper.
+ARG TORCH_CUDA=cu124
+ARG TORCH_VERSION=2.6.0
 ARG DA3_REF=3d835ec1a5802d64a8b8b15f817a1ab54809bfe4
 ARG BAKE_MODELS="da3-small da3-base da3-large"
 ARG UID=1000

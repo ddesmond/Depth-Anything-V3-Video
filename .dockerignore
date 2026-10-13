@@ -5,3 +5,4 @@ tmp
 .env
 nuke
 **/__pycache__
+dist

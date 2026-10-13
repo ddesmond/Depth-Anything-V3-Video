@@ -32,9 +32,10 @@ sequences (`shot.####.exr`, `shot.%04d.png`). Outputs are **half-float EXR depth
 - NVIDIA driver + [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/)
 - Docker Compose v2
 
-The image uses PyTorch `cu126` wheels by default. These are the newest builds that
-still support Pascal cards (GTX 10xx) and they also run on newer GPUs. On
-Turing or newer you can set `TORCH_CUDA=cu128` in `.env`.
+The image uses PyTorch 2.6.0 built for CUDA 12.4 (`TORCH_CUDA=cu124`,
+`TORCH_VERSION=2.6.0`). The host's NVIDIA driver must support CUDA 12.4 or newer
+(driver 550+; `nvidia-smi` shows the supported version). It runs on Pascal (GTX 10xx)
+and newer GPUs.
 
 ### Setup
 
@@ -54,12 +55,13 @@ curl localhost:8000/health
   If firewalld is active, open it with
   `sudo firewall-cmd --zone=public --add-port=8000/tcp --permanent && sudo firewall-cmd --reload`.
 - The queue is in memory, so queued and running jobs are lost if the container restarts.
+- Container logs rotate at 10 MB, keeping 5 files (set under `logging:` in `docker-compose.yml`).
 
 ### Web UI
 
 Open **http://localhost:8000/ui** (or `http://<machine-ip>:8000/ui` from the LAN;
 `/` redirects there). It has these features:
-- Upload a video, image or `.zip` sequence, or enter a path on the mounted storage.
+- Upload a video, image or `.zip` sequence. The web UI is upload-only and never reads paths on the server's disks; path jobs are only available through the REST API (used by the Nuke node).
 - Pick the model and options.
 - Watch the live job list and progress, play the preview, download the result zip, or cancel a job.
 

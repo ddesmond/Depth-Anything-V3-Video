@@ -1,21 +1,90 @@
 # DA3 Video Docker Service: Handover
 
-2026-10-12
+2026-10-13
 
 ## Status at a glance
 
-The Docker GPU service is built, tested on the GTX 1070 and pushed to `main-docker`.
-The Nuke node and LAN access are still unverified, and the running container is
-pointed at a test folder.
+The service runs on **hyper01** (offline machine, RTX 2080) at **http://10.0.0.131:8010/ui**, using the CUDA 12.4 image. It's reachable from hyper01 itself and from your Mac over WireGuard. Higgsfield generation and the Nuke node are built but not yet tested for real.
 
 | Item | State |
 | --- | --- |
-| Repo / branch | `github.com/ddesmond/Depth-Anything-V3-Video`, branch `main-docker`; not merged to `main`, no PR |
-| Image | `da3-video:latest`, about 10 GB, torch 2.14.1+cu126, Gradio 6.30, all three models baked |
-| Running container | Up on the dev box, but started with `PROJECTS_DIR` set to a temporary test folder in `/tmp`, not real shots |
-| `.env` | `PROJECTS_DIR=/home/des/projects`, a placeholder folder that does not exist |
-| LAN access | Bound to `127.0.0.1` and `192.168.10.7` only. firewalld `public` zone on `enp8s0` still blocks port 8000, so other LAN machines can't reach it yet |
+| Repo / branch | `github.com/ddesmond/Depth-Anything-V3-Video`, branch `main-docker`; not merged to `main`, no PR. The CUDA 12.4 default changes are **not committed yet** |
+| Image | `da3-video:latest`, 8.76 GB, torch 2.6.0 + CUDA 12.4, Gradio 6.30, all three models baked |
+| hyper01 deployment | Running at `http://10.0.0.131:8010/ui`, GPU reported as RTX 2080. Details below |
+| Dev box (r7) | Image built and tested there; the container is removed, nothing running |
+| Offline bundle | `dist/da3-offline/` on r7 (5.4 GB, gitignored), copy in `/opt/da3-offline` on hyper01 |
 | Nuke node | Written and syntax-checked only; never run inside Nuke |
+| Higgsfield tabs | Tested only against a mock API; no key yet, and hyper01 has no internet anyway |
+
+## Deployment on hyper01 (offline)
+
+hyper01 has no internet. It's reached from r7 by jumping through the Mac (`des@192.168.10.5`) over its WireGuard link (`utun5`, `10.10.0.2`): `ssh -J des@192.168.10.5 root@10.0.0.131`, or from the Mac directly.
+
+| Fact (checked on hyper01) | Value |
+| --- | --- |
+| OS | Rocky Linux 9.5 |
+| GPU / driver | NVIDIA GeForce RTX 2080 (sm_75), driver 550.142, supports CUDA 12.4 |
+| Docker / Compose | 27.4.1 / v2.32.1 |
+| IP | `10.0.0.131` on `ens5f0`; firewalld inactive; iptables INPUT policy ACCEPT |
+| Disk | `/` 1.9 TB, about 1.7 TB free |
+| Users | `des` is UID 1001 / GID 1003; the container runs as 1000:1001 |
+
+**What's in `/opt/da3-offline`**
+
+| Path | What |
+| --- | --- |
+| `da3-video-image.tar.gz` + `.sha256` | The CUDA 12.4 image (5.4 GB), checksum verified after the copy, already loaded with `docker load` |
+| `docker-compose.yml`, `.env`, `.env.example` | Compose setup; `.env` is configured for hyper01 (below) |
+| `nvidia-toolkit-el9/` | NVIDIA container toolkit 1.20.1 RPMs (installed) |
+| `projects/`, `data/`, `hf-cache/` | Test projects folder, job data and the HF cache. Owned by 1000:1001 so the container can write |
+| `README.md`, `HANDOVER.md`, `OFFLINE.md`, `nuke/` | Docs and the Nuke node |
+
+**`.env` on hyper01:** `PROJECTS_DIR=/opt/da3-offline/projects` (test folder), `DA3_LAN_IP=10.0.0.131`, `DA3_PORT=8010`, `HF_CACHE_DIR=/opt/da3-offline/hf-cache`, `HF_HUB_OFFLINE=1`, no UI password, no Higgsfield key.
+
+**Changes made on hyper01:**
+- Installed `nvidia-container-toolkit` 1.20.1 (+ `-base`, `libnvidia-container-tools`, `libnvidia-container1`) from the local RPMs, with all repos disabled.
+- `nvidia-ctk runtime configure --runtime=docker` added the `nvidia` runtime to `/etc/docker/daemon.json` (insecure-registries kept). Backup: `/etc/docker/daemon.json.bak-da3`.
+- Restarted Docker (no containers were running).
+- Loaded `da3-video:latest`, started `da3-offline-da3-1` with `docker compose up -d --no-build`.
+- `chown 1000:1001` on `data/`, `projects/`, `hf-cache/` (the first start crashed with `Permission denied: '/data/generate'` because they were created as root).
+
+**Verified:**
+
+| Check | Result |
+| --- | --- |
+| `/health` | `device: cuda`, `NVIDIA GeForce RTX 2080`, `torch 2.6.0+cu124` |
+| UI from hyper01 | `http://localhost:8010/ui` → 200, `http://10.0.0.131:8010/ui` → 200 |
+| Listening | `10.0.0.131:8010` and `127.0.0.1:8010` only |
+| UI from the Mac (WireGuard, `10.10.0.2`) | 200 |
+
+**Not verified:**
+- [ ] Access from another machine on 10.0.x (no login on any; open `http://10.0.0.131:8010/ui` from one).
+- [ ] A real depth job on the RTX 2080 (only `/health` and the UI were checked).
+- [ ] Real projects folder: `PROJECTS_DIR` points at the test folder `/opt/da3-offline/projects`; Nuke paths only work if the real shot storage is mounted at the same path.
+- [ ] Output ownership: files are written as UID 1000:1001, which doesn't match `des` (1001:1003) on hyper01. Changing it needs a rebuild with `UID`/`GID` build args (on a machine with internet).
+
+**Later changes (2026-10-13):**
+- Log rotation: `docker-compose.yml` now sets `json-file` logs to 10 MB × 5 files. Before, logs were unlimited (no `log-opts` in hyper01's `daemon.json` either). Applied on hyper01 and confirmed with `docker inspect`.
+- Web UI is upload-only: the Depth tab's "Path on server" input was removed. Path jobs remain on the REST API (`POST /jobs`) for the Nuke node. The Generate tab only takes uploads, finished DA3 jobs or https URLs.
+- `.dockerignore` now excludes `dist/` (it had pulled the 5.4 GB archive into the image).
+- On r7, `docker image prune` removed two old untagged ~300 MB images that weren't from this project.
+
+**Manage it on hyper01:**
+```bash
+cd /opt/da3-offline
+docker compose ps                 # status
+docker compose logs -f            # logs
+docker compose restart            # restart
+docker compose down               # stop and remove the container
+```
+
+## CUDA 12.4 change (2026-10-13)
+
+The first image used torch 2.14.1 + CUDA 12.6, chosen from the dev box only (driver 580). hyper01's driver 550 supports CUDA 12.4, so the image was rebuilt with **torch 2.6.0 + CUDA 12.4**, the newest torch PyTorch publishes for cu124. Defaults now say `TORCH_CUDA=cu124`, `TORCH_VERSION=2.6.0` in `Dockerfile`, `docker-compose.yml`, `.env.example` and README. Kernels cover sm_50 to sm_90 (GTX 1070 and RTX 2080 both tested). Rule for later builds: match the CUDA build to the **oldest driver** among the target machines (`nvidia-smi`).
+
+Also added: an `HF_HUB_OFFLINE` switch in `docker-compose.yml`/`.env.example` (set to 1 offline), and `dist/` in `.gitignore`.
+
+Uncommitted: `Dockerfile`, `docker-compose.yml`, `.env.example`, `.gitignore`, `README.md`, `HANDOVER.md`.
 
 ## Update: Higgsfield generation (built after the first handover)
 
@@ -48,7 +117,7 @@ All but four asks are built and tested. The gaps:
 | What was asked | Implemented | Verified | Gap |
 | --- | --- | --- | --- |
 | Run the repo in Docker on a GPU machine; plan compose together | Yes: `Dockerfile`, `docker-compose.yml` | Yes, on the GTX 1070 | None |
-| Works on both GPUs (GTX 1070 and newer) | Yes: torch `cu126` (has Pascal kernels), `TORCH_CUDA` build arg | 1070 only | Never run on a 3090 or other Turing+ card |
+| Works on both GPUs (GTX 1070 and newer) | Yes: torch 2.6.0 `cu124` (kernels sm_50–sm_90), `TORCH_CUDA` / `TORCH_VERSION` build args | 1070 only | Not yet run on the RTX 2080 (hyper01) or a 3090 |
 | Long-running service | Yes: FastAPI app, `restart: unless-stopped` | Yes | None |
 | Weights: bake into image and use host folder | Yes: all three baked in `/opt/hf`; host `~/.cache/huggingface` checked first | Baked path yes | Host-cache hit and download-on-miss never exercised (host cache is empty) |
 | Load from mounted host dir or push through API | Yes: path jobs and `/jobs/upload` | Yes | None |
@@ -69,7 +138,7 @@ Four items block real use. The rest are limitations to know about.
 - [ ] Set `PROJECTS_DIR` in `.env` to the real shots folder, create it, then `docker compose up -d` (the running container still points at a `/tmp` test folder).
 - [ ] Open the LAN port: `sudo firewall-cmd --zone=public --add-port=8000/tcp --permanent && sudo firewall-cmd --reload`, then test `http://192.168.10.7:8000/ui` from another LAN machine.
 - [ ] Test the Nuke node in Nuke: install it, submit from a Read, check the auto-created Read loads `depth.Z`.
-- [ ] Build and test on the 3090 (cu126 should work there; `cu128` is optional).
+- [ ] Test on hyper01's RTX 2080 (driver 550 / CUDA 12.4) once the NVIDIA container toolkit is installed there, and on the 3090.
 
 **Not built (out of scope or deferred)**
 
@@ -106,7 +175,7 @@ feeds the same in-memory queue.
 
 | File | Role |
 | --- | --- |
-| `Dockerfile` | python:3.10-slim, torch cu126, deps, DA3 at pinned commit, baked weights, runs uvicorn as UID 1000 |
+| `Dockerfile` | python:3.10-slim, torch 2.6.0 cu124, deps, DA3 at pinned commit, baked weights, runs uvicorn as UID 1000 |
 | `docker-compose.yml` | One `da3` service: GPU reservation, port binding, `PROJECTS_DIR` / `./data` / HF cache mounts |
 | `.env.example` | Template for `.env` (gitignored) |
 | `requirements.txt` | DA3 runtime deps minus xformers/open3d, plus OpenEXR, FastAPI, Gradio |
@@ -143,7 +212,7 @@ All three feed the same queue.
 | `DA3_PORT` | 8000 | Published port |
 | `DA3_LAN_IP` | 192.168.10.7 | LAN address to publish on, plus `127.0.0.1`. Never the Netbird interface (`wt0`) |
 | `HF_CACHE_DIR` | `/home/des/.cache/huggingface` | Host model cache, checked before the baked weights |
-| `TORCH_CUDA` | `cu126` | `cu126` runs on Pascal and newer; `cu128`/`cu130` are Turing+ only |
+| `TORCH_CUDA`, `TORCH_VERSION` | `cu124`, `2.6.0` | Needs a driver supporting CUDA 12.4+ (550+); runs on Pascal and newer |
 | `BAKE_MODELS` | `da3-small da3-base da3-large` | Models baked at build time |
 
 **Web UI:** `http://localhost:8000/ui`, or `http://192.168.10.7:8000/ui` once the firewall is open. `/` redirects there. You can:
@@ -191,7 +260,7 @@ six-frame EXR sequence numbered 1001–1006. No real plates were used.
 
 | Test | Result |
 | --- | --- |
-| torch sees GPU in container | 2.14.1+cu126, sm_61 runs via the sm_60 kernels |
+| torch sees GPU in container | 2.6.0+cu124, sm_61 runs via the sm_60 kernels (first tested on 2.14.1+cu126, rebuilt for cu124) |
 | `da3-small`, video, 24 frames | 2.2 s (about 10 frames/s at `process_res` 504) |
 | `da3-base`, EXR sequence 1002–1005 | 4.6 s including model load |
 | `da3-large`, `batch_size` 4, 24 frames | 15.7 s including model load; fits in 8 GB |
@@ -218,8 +287,8 @@ Not tested:
 
 | Decision | Why | Watch out for |
 | --- | --- | --- |
-| torch `cu126` by default | Last CUDA build of torch with Pascal (GTX 10xx) kernels | Moving to `cu128`+ breaks the 1070 with "no kernel image" |
-| DA3 installed with `--no-deps`, its deps listed in `requirements.txt` | Its `xformers` dependency would replace the cu126 torch | DA3 commit pinned to `3d835ec`; bumping it may add imports that need new deps. The build runs an import check |
+| torch 2.6.0 `cu124` by default | hyper01's driver (550) supports CUDA 12.4; 2.6.0 is the newest torch published for cu124 | A newer CUDA build needs a newer driver on every target; `cu128`+ also drops the GTX 1070 |
+| DA3 installed with `--no-deps`, its deps listed in `requirements.txt` | Its `xformers` dependency would replace the pinned CUDA torch | DA3 commit pinned to `3d835ec`; bumping it may add imports that need new deps. The build runs an import check |
 | `pip` constraints file pins torch during the deps install | Stops any package from swapping torch | — |
 | `pip install --upgrade pip` first | The base image's pip fails on a `typing-extensions` name quirk | — |
 | Models baked before the other deps | A requirements change doesn't re-download about 2.3 GB | Editing `app/models.py` does invalidate the bake layer |

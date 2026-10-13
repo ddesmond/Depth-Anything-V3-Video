@@ -3,7 +3,8 @@ services:
     build:
       context: .
       args:
-        TORCH_CUDA: ${TORCH_CUDA:-cu126}
+        TORCH_CUDA: ${TORCH_CUDA:-cu124}
+        TORCH_VERSION: ${TORCH_VERSION:-2.6.0}
         BAKE_MODELS: ${BAKE_MODELS:-da3-small da3-base da3-large}
         UID: ${UID:-1000}
         GID: ${GID:-1000}
@@ -16,6 +17,7 @@ services:
     environment:
       ALLOWED_ROOTS: ${PROJECTS_DIR:?set PROJECTS_DIR in .env}
       HF_HOST_CACHE: /hf-host/hub
+      HF_HUB_OFFLINE: ${HF_HUB_OFFLINE:-0}   # 1 on air-gapped machines: never try to download weights
       DA3_LOG_LEVEL: WARN
       GRADIO_TEMP_DIR: /data/gradio-cache
       UI_USER: ${UI_USER:-da3}
@@ -30,6 +32,12 @@ services:
       - ./data:/data
       - ${HF_CACHE_DIR:-~/.cache/huggingface}:/hf-host
     shm_size: 2gb
+    # rotate container logs: at most 5 x 10 MB
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
     deploy:
       resources:
         reservations:
